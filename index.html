@@ -1,121 +1,186 @@
 <!DOCTYPE html>
-<html lang="ru" data-build="20261101-2">
+<html lang="ru" data-build="20261101-7">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#f7f4ee">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#efe9dc">
 <title>Жребий</title>
 <style>
   :root{
-    --bg1:#faf8f3; --bg2:#f7f4ee; --bg3:#eee9df;
-    --card:#ffffff; --line:#e7e1d5;
-    --ink:#211e19; --muted:#7d766a; --faint:#a29a8b;
-    --acc:#4a7c59; --accfill:#eaf1e8; --accline:#cfe0cd;
-    --warn:#9a5b3f;
+    --paper:#efe9dc;
+    --paper-hi:#f7f2e7;
+    --ink:#17140f;
+    --ink-soft:#3f382f;
+    --muted:#6d6254;
+    --faint:#94876e;
+    --rule:#cfc3aa;
+    --accent:#a8412a;
+    --accent-soft:#f0ddd3;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper);
     color:var(--ink);
-    background:linear-gradient(180deg,var(--bg1),var(--bg2) 40%,var(--bg3));
-    background-attachment:fixed;
-    font-size:16px; line-height:1.5;
+    font-family:var(--serif);
+    font-size:17px;line-height:1.5;
     min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
   }
+  body.dark{background:var(--ink);color:var(--paper-hi)}
   .wrap{
     max-width:440px;margin:0 auto;
-    padding:calc(18px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+    padding:calc(22px + env(safe-area-inset-top)) 22px calc(30px + env(safe-area-inset-bottom));
   }
   .hidden{display:none !important}
-  .serif{font-family:"Iowan Old Style",Palatino,Georgia,serif}
+  hr.rule{border:0;border-top:1px solid var(--rule);margin:0}
+  .caps{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .num{font-variant-numeric:tabular-nums}
 
-  /* ---------- стартовый экран ---------- */
-  .brand{font-size:12px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
-  h1{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:400;font-size:40px;line-height:1.08;margin:14px 0 10px;letter-spacing:-.01em}
-  .lede{color:var(--muted);font-size:16px;margin:0 0 22px}
+  /* ---------- шапка ---------- */
+  .masthead{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:10px}
+  .wordmark{font-family:var(--sans);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--ink)}
+  .chapter{font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- старт ---------- */
+  .start-top{display:flex;justify-content:space-between;align-items:baseline}
+  h1{
+    font-family:var(--serif);font-weight:400;font-size:46px;line-height:1.02;
+    letter-spacing:-.015em;margin:34px 0 16px;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .lede{font-size:17.5px;line-height:1.5;color:var(--ink-soft);margin:0 0 30px;max-width:30ch}
+  #s-start{display:flex;flex-direction:column;min-height:calc(100dvh - 74px)}
   .btn{
-    display:block;width:100%;text-align:center;border:1px solid var(--line);background:var(--card);
-    color:var(--ink);font:inherit;font-size:17px;padding:16px 18px;border-radius:16px;
-    box-shadow:0 1px 2px rgba(33,30,25,.035);cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--paper-hi);
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
+    padding:19px 20px;border-radius:2px;cursor:pointer;
   }
-  .btn:active{transform:translateY(1px)}
-  .btn.primary{background:var(--accfill);border-color:var(--accline);color:#2f5239;font-weight:600}
-  .btn.ghost{background:transparent;border-color:transparent;color:var(--muted);box-shadow:none;font-size:15px;padding:12px}
-  .row{display:flex;gap:10px}
-  .row .btn{flex:1}
-  .hint{font-size:12.5px;color:var(--faint);text-align:center;margin:22px 0 0}
-
-  /* ---------- экран жизни ---------- */
-  .topbar{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-  .who{font-size:14px;color:var(--muted)}
-  .who b{color:var(--ink);font-weight:600}
-  .stage{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
-
-  .scales{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 1px 2px rgba(33,30,25,.035);margin-bottom:12px}
-  .scale{display:grid;grid-template-columns:72px 1fr 26px;gap:10px;align-items:center;padding:4px 0}
-  .scale .lab{font-size:13px;color:var(--muted)}
-  .scale .bar{height:7px;border-radius:99px;background:#f0ece2;overflow:hidden}
-  .scale .fill{height:100%;border-radius:99px;background:var(--acc);transition:width .35s ease}
-  .scale .val{font-size:12px;color:var(--faint);text-align:right;font-variant-numeric:tabular-nums}
-  .moneyline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid #f2eee4}
-  .moneyline .neg{color:var(--warn)}
-
-  .feed{margin:0 0 12px}
-  .entry{border-left:2px solid #eae4d7;padding:0 0 12px 12px;margin-bottom:2px}
-  .entry:last-child{border-left-color:var(--accline)}
-  .entry .yr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-  .entry .tx{font-size:14.5px;color:#4a453d;margin-top:2px}
-
-  .event{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 1px 2px rgba(33,30,25,.035)}
-  .event h2{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:400;font-size:21px;margin:0 0 8px;line-height:1.25}
-  .event p{margin:0 0 14px;font-size:15px;color:#4a453d}
-  .opt{
-    display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fdfcf9;
-    font:inherit;font-size:15px;color:var(--ink);padding:13px 14px;border-radius:13px;margin-bottom:8px;cursor:pointer;
+  .btn:active{opacity:.86}
+  .btn .arrow{font-family:var(--serif);font-size:16px;letter-spacing:0}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+  .btn.ink{background:var(--paper-hi);color:var(--ink);border-color:var(--paper-hi)}
+  .links{display:flex;gap:18px;margin-top:18px}
+  .links button{
+    background:none;border:0;padding:0;font-family:var(--sans);font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;
+    border-bottom:1px solid var(--rule);padding-bottom:2px;
   }
-  .opt:last-child{margin-bottom:0}
-  .opt:active{background:var(--accfill);border-color:var(--accline)}
-  .opt .sub{display:block;font-size:12.5px;color:var(--faint);margin-top:2px}
+  .manifest{margin:auto 0 0;font-size:19px;line-height:1.42;font-style:italic;color:var(--ink-soft);padding-top:44px}
+  .ladder{display:flex;gap:4px;margin-top:22px;align-items:flex-end}
+  .ladder i{display:block;flex:1;height:12px;background:#ded4be}
+  .ladder i.first{background:var(--accent)}
+  .ladder-note{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:9px}
+
+  /* ---------- жизнь ---------- */
+  .ident{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 0}
+  .ident-name{font-size:17px}
+  .ident-meta{font-family:var(--sans);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .agebar{display:flex;align-items:flex-end;gap:12px;padding:14px 0 4px}
+  .age{font-size:40px;line-height:.95;letter-spacing:-.02em}
+  .age-unit{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-left:7px}
+  .stage-name{font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-left:auto;padding-bottom:4px}
+
+  .ledger{padding:14px 0 6px;border-top:1px solid var(--rule);margin-top:12px}
+  .ledger-row{display:grid;grid-template-columns:78px 1fr 34px;gap:12px;align-items:center;padding:5px 0}
+  .ledger-label{font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .dots{display:flex;gap:3px}
+  .dots i{display:block;height:4px;flex:1;background:#ded4be;border-radius:0}
+  .dots i.on{background:var(--ink)}
+  .ledger-val{font-size:14px;text-align:right;color:var(--ink-soft)}
+  .ledger-row.money{border-top:1px solid var(--rule);margin-top:6px;padding-top:9px;grid-template-columns:1fr auto}
+  .ledger-row.money .ledger-val{font-size:14.5px}
+  .ledger-row.money .neg{color:var(--accent)}
+
+  .chronicle{margin:20px 0 26px}
+  .chron-entry{display:grid;grid-template-columns:58px 1fr;gap:12px;padding:9px 0;border-top:1px solid rgba(214,203,181,.7)}
+  .chron-entry:first-child{border-top:0}
+  .chron-year{font-family:var(--sans);font-size:10.5px;letter-spacing:.04em;color:var(--muted);padding-top:4px;white-space:nowrap}
+  .chron-text{font-size:15.5px;line-height:1.45;color:var(--ink-soft)}
+
+  .event{padding-top:4px;animation:rise .26s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.event{animation:none}}
+  .kicker{font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .event h2{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.14;letter-spacing:-.01em;margin:0 0 10px}
+  .event p{font-size:16.5px;line-height:1.52;color:var(--ink-soft);margin:0 0 18px}
+  .options{border-top:1px solid var(--ink)}
+  .option{
+    display:grid;grid-template-columns:22px 1fr 16px;gap:10px;width:100%;text-align:left;
+    align-items:start;min-height:56px;
+    background:none;border:0;border-bottom:1px solid var(--rule);padding:15px 4px;cursor:pointer;
+    font-family:var(--serif);color:var(--ink);
+  }
+  .option:active{background:var(--accent-soft)}
+  .opt-go{font-family:var(--sans);font-size:12px;color:var(--faint);padding-top:5px;text-align:right}
+  .option:active .opt-go{color:var(--accent)}
+  .opt-idx{font-family:var(--sans);font-size:10px;letter-spacing:.1em;color:var(--accent);padding-top:6px}
+  .opt-label{display:block;font-size:17px;line-height:1.35}
+  .opt-sub{display:block;font-family:var(--sans);font-size:11.5px;letter-spacing:.02em;color:var(--muted);margin-top:3px}
+  .option.next{grid-template-columns:1fr auto}
+  .option.next .opt-label{font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
 
   /* ---------- смерть ---------- */
-  .big{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:76px;line-height:1;margin:6px 0 0;font-weight:400}
-  .bigsub{font-size:14px;color:var(--muted);margin:2px 0 20px}
-  .block{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(33,30,25,.035)}
-  .block h3{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
-  .block .l{font-size:15px;margin:0 0 6px}
-  .block .l:last-child{margin-bottom:0}
-  .block .sm{font-size:13.5px;color:var(--muted)}
-  .quote{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:21px;line-height:1.35;margin:0}
+  .dark .masthead .wordmark, .dark .masthead .chapter{color:var(--paper-hi)}
+  .dark .rule{border-color:rgba(247,242,231,.18)}
+  .obit-top{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:10px}
+  .obit-kicker{font-family:var(--sans);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#b9ad99}
+  .obit-age{font-size:104px;line-height:.86;letter-spacing:-.03em;margin:26px 0 4px}
+  .obit-unit{font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#d6cbb6;margin-left:10px}
+  .obit-place{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#cdc2ae;margin-bottom:26px}
+  .obit-quote{font-size:23px;line-height:1.34;font-style:italic;margin:0 0 6px}
+  .obit-quote-by{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#c4b9a4;margin-bottom:28px}
+  .dl{border-top:1px solid rgba(247,242,231,.18);margin-bottom:26px}
+  .dl-row{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid rgba(247,242,231,.12)}
+  .dl-k{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#c4b9a4;padding-top:3px}
+  .dl-v{font-size:15.5px;line-height:1.4}
+  .dark .ledger{border-color:rgba(247,242,231,.18)}
+  .dark .dots i{background:rgba(247,242,231,.22)}
+  .dark .dots i.on{background:var(--paper-hi)}
+  .dark .ledger-label{color:#c4b9a4}
+  .dark .ledger-val{color:#efe7d8}
+  .dark .dots i{background:rgba(247,242,231,.28)}
+  .dark .chron-entry{border-color:rgba(247,242,231,.12)}
+  .dark .chron-text{color:#d8cfbd}
+  .dark .chron-year{color:#c4b9a4}
+  .section-title{font-family:var(--sans);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#c4b9a4;margin:0 0 10px}
+  .dark .btn{background:var(--paper-hi);color:var(--ink);border-color:var(--paper-hi)}
+  .dark .btn.ghost{background:transparent;color:var(--paper-hi);border-color:rgba(247,242,231,.3)}
 
   /* ---------- карточка ---------- */
-  .card{
-    background:linear-gradient(180deg,#fffdf8,#fdfbf5);border:1px solid var(--line);border-radius:18px;
-    padding:20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(33,30,25,.04)
+  .poster{
+    background:var(--paper-hi);border:1px solid var(--ink);padding:22px;position:relative;margin-bottom:18px;
   }
-  .card .brand{margin-bottom:10px}
-  .card .nm{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:26px;line-height:1.2;margin:0 0 4px}
-  .card .loc{font-size:14px;color:var(--muted);margin:0 0 14px}
-  .card .nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-  .card .nums div{font-size:13px;color:var(--muted)}
-  .card .nums b{display:block;font-size:17px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
-  .card .foot{font-size:11px;color:var(--faint);margin-top:12px}
-  hr.sep{border:0;border-top:1px solid #f0ebdf;margin:12px 0}
+  .poster:before{
+    content:"";position:absolute;inset:6px;border:1px solid var(--rule);pointer-events:none;
+  }
+  .poster .wordmark{font-size:10px;letter-spacing:.36em}
+  .poster-age{font-size:76px;line-height:.88;letter-spacing:-.03em;margin:18px 0 2px}
+  .poster-age-unit{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .poster-name{font-size:20px;margin:14px 0 2px}
+  .poster-place{font-family:var(--sans);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  .poster-foot{font-family:var(--sans);font-size:10.5px;line-height:1.5;color:var(--muted);margin-top:16px;padding-top:12px;border-top:1px solid var(--rule)}
 
-  .list .item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #f2eee4;font-size:14px}
-  .list .item:last-child{border-bottom:0}
-  .list .item .d{color:var(--faint);font-size:12.5px;white-space:nowrap}
-  .how p{font-size:15px;color:#4a453d;margin:0 0 10px}
-  .how .src{font-size:12px;color:var(--faint);line-height:1.45}
+  /* ---------- архив и правила ---------- */
+  .arch-row{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:baseline;padding:14px 0;border-top:1px solid var(--rule);text-align:left;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;cursor:default}
+  .arch-age{font-size:30px;line-height:1}
+  .arch-body{font-size:14.5px;color:var(--ink-soft)}
+  .arch-meta{font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+  .how h3{font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:26px 0 8px}
+  .how p{font-size:16.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 4px}
+  .how .src{font-size:14px;color:var(--muted)}
   .toast{
     position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);
-    background:#211e19;color:#fdfbf5;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;
-    transition:opacity .2s;pointer-events:none;
+    background:var(--ink);color:var(--paper-hi);font-family:var(--sans);font-size:12px;letter-spacing:.08em;
+    padding:11px 16px;opacity:0;transition:opacity .2s;pointer-events:none;
   }
-  .toast.on{opacity:.95}
+  .toast.on{opacity:.96}
 </style>
 </head>
 <body>
@@ -123,60 +188,55 @@
 
   <!-- СТАРТ -->
   <section id="s-start">
-    <div class="brand">жребий</div>
-    <h1>Ты не выбираешь,<br>где родиться.</h1>
-    <p class="lede">Одна жизнь от рождения до смерти. Начало — по реальной статистике. Дальше решаешь ты, но не всё.</p>
-    <button class="btn primary" id="btn-born">Родиться</button>
-    <div class="row" style="margin-top:10px">
-      <button class="btn ghost" id="btn-archive">Прожитые жизни</button>
-      <button class="btn ghost" id="btn-how">Как это работает</button>
+    <div class="start-top">
+      <div class="wordmark">Жребий</div>
+      <div class="chapter">MMXXVI</div>
     </div>
-    <p class="hint">Три минуты. Тринадцать глав. Без аккаунта и без рекламы.</p>
+    <hr class="rule">
+    <h1>Ты не выбираешь,<br>где <em>родиться</em>.</h1>
+    <p class="lede">Одна жизнь целиком. Начало — по статистике. Дальше решаешь ты, но не всё.</p>
+    <button class="btn" id="btn-born"><span>Родиться</span><span class="arrow">→</span></button>
+    <div class="links">
+      <button id="btn-archive">Прожитые жизни</button>
+      <button id="btn-how">Как это работает</button>
+    </div>
+    <p class="manifest">Смерть необратима.<br>Жизнь одна, и переиграть её нельзя.</p>
+    <div class="ladder">
+      <i class="first"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="ladder-note">тринадцать глав · три минуты</div>
   </section>
 
   <!-- ЖИЗНЬ -->
   <section id="s-life" class="hidden">
-    <div class="topbar">
-      <div class="who" id="who"></div>
-      <div class="stage" id="stage"></div>
+    <div class="masthead">
+      <div class="wordmark">Жребий</div>
+      <div class="chapter" id="ch">глава I / XIII</div>
     </div>
-    <div class="scales" id="scales"></div>
-    <div class="feed" id="feed"></div>
+    <hr class="rule">
+    <div class="ident">
+      <div class="ident-name" id="who-name"></div>
+      <div class="ident-meta" id="who-meta"></div>
+    </div>
+    <div class="agebar">
+      <div class="age"><span id="age-num" class="num">0</span><span class="age-unit" id="age-unit">лет</span></div>
+      <div class="stage-name" id="stage"></div>
+    </div>
+    <div class="ledger" id="scales"></div>
+    <div class="chronicle" id="feed"></div>
     <div class="event" id="event"></div>
   </section>
 
-  <!-- СМЕРТЬ -->
   <section id="s-death" class="hidden"></section>
-
-  <!-- КАРТОЧКА -->
   <section id="s-card" class="hidden"></section>
-
-  <!-- АРХИВ -->
   <section id="s-archive" class="hidden"></section>
-
-  <!-- КАК ЭТО РАБОТАЕТ -->
-  <section id="s-how" class="hidden">
-    <div class="brand">как это работает</div>
-    <h1 style="font-size:28px">Четыре правила</h1>
-    <div class="how">
-      <p><b>Старт не выбирается.</b> Страна, семья, достаток и здоровье — из распределений, не из настроек. Выборы в жизни меняют шансы, а не гарантируют исход.</p>
-      <p><b>Одна жизнь — одна история.</b> Тринадцать глав, каждый выбор двигает четыре шкалы: здоровье, счастье, знания, близкие. Деньги считаются отдельно — заработком, расходами, наследством и потерями.</p>
-      <p><b>Деньги не растут сами.</b> Доход зависит от страны, знаний и пола, расходы — от возраста и здоровья. Часть жизней заканчивается в нуле или в долге, потому что так заканчивается часть настоящих.</p>
-      <p><b>Тяжёлого без предупреждения нет.</b> Возраст 15+. Сцен насилия и способов уйти из жизни в этой версии нет — это позиция, а не забывчивость.</p>
-    </div>
-    <div class="block" style="margin-top:16px">
-      <h3>откуда числа</h3>
-      <p class="src">Ожидаемая продолжительность жизни, младенческая смертность, ВВП на человека по паритету и число рождений — Всемирный банк, 2023, выгрузка 01.11.2026. Десять стран: Индия, Нигерия, США, Бразилия, Египет, Индонезия, Россия, Япония, Германия, Кипр. Вес страны — по доле рождений, но сглаженный корнем: в реальности Индия даёт около каждого шестого рождения в мире, здесь — примерно каждое третье. Без этого сглаживания половина жизней была бы индийской. Кипр и Япония выпадают редко, потому что там мало рождений. Достаток семьи — логнормальное распределение вокруг ВВП на человека: это модель, а не данные по конкретному человеку.</p>
-    </div>
-    <button class="btn" id="btn-back-start">Назад</button>
-  </section>
+  <section id="s-how" class="hidden"></section>
 
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 "use strict";
-
 /* ================== ДАННЫЕ СТРАН ================== */
 const COUNTRIES = [
   {iso:"IND", ru:"Индия", le:72.0, gdp:9853, imr:24.5, share:49.92, rural:0.55,
@@ -344,7 +404,7 @@ const EVENTS = [
    o:[{a:"Съехаться", s:"", e:{p:6, r:4, m:-3, h:1}},
       {a:"Подождать ещё год", s:"", e:{p:-2, m:2, k:1}},
       {a:"Расстаться и не тянуть", s:"", e:{p:-4, r:-2, k:2}}]},
-  {id:"e4c", st:4, t:"Здоровье впервые",
+  {id:"e4c", st:4, t:"Спина и зубы",
    x:"Спина, зубы, вечный кашель. Врач говорит: «Молодой, само пройдёт», и берёт за приём как за полдня работы.",
    o:[{a:"Провериться и лечиться", s:"", e:{h:7, m:-3}},
       {a:"Терпеть и работать", s:"", e:{h:-6, m:1, p:-1}}]},
@@ -365,12 +425,12 @@ const EVENTS = [
    o:[{a:"Взять", s:"", e:{m:8, k:4, p:-2, r:-3, h:-3}},
       {a:"Отказаться, остаться в тени", s:"", e:{p:3, h:2, m:-1}},
       {a:"Попросить другое: меньше часов", s:"", e:{h:4, p:5, m:-4}}]},
-  {id:"e5b", st:5, prio:true, cond:b=>["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Дети",
+  {id:"e5b", st:5, prio:true, cond:b=>["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Завести детей?",
    x:"Разговор на кухне: «Может, пора?» У соседей уже трое, у родни спрашивают, когда.",
-   o:[{a:"Двое, как у всех", s:"", e:{c:2, p:6, r:4, m:-8, h:-3, k:-2}},
-      {a:"Один, и хватит", s:"", e:{c:1, p:4, r:1, m:-4, h:-1}},
+   o:[{a:"Двое детей", s:"", e:{c:2, p:6, r:4, m:-8, h:-3, k:-2}},
+      {a:"Один ребёнок", s:"", e:{c:1, p:4, r:1, m:-4, h:-1}},
       {a:"Пока не сейчас", s:"", e:{m:3, p:-2, r:-3}}]},
-  {id:"e5b2", st:5, prio:true, cond:b=>!["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Дети",
+  {id:"e5b2", st:5, prio:true, cond:b=>!["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Завести детей?",
    x:"Разговор на кухне: «Может, пора?» Знакомые уже с колясками, а вы всё откладываете.",
    o:[{a:"Один ребёнок", s:"", e:{c:1, p:6, r:3, m:-5, h:-2}},
       {a:"Двое, если получится", s:"", e:{c:2, p:6, r:2, m:-9, h:-4, k:-2}},
@@ -401,7 +461,7 @@ const EVENTS = [
    x:"В поликлинике находят то, что не болит: давление, сахар, что-то в анализах.",
    o:[{a:"Лечиться и менять быт", s:"", e:{h:8, m:-4, p:-1}},
       {a:"Забыть до первого приступа", s:"", e:{h:-7, m:1}}]},
-  {id:"e6e", st:6, prio:true, cond:(b,L)=>L.children>0 && L.children<4, t:"Ещё один",
+  {id:"e6e", st:6, prio:true, cond:(b,L)=>L.children>0 && L.children<4, t:"Ещё ребёнок?",
    x:"Первый уже говорит, второй пока только в разговорах. Денег на двоих ровно вдвое меньше, чем нужно.",
    o:[{a:"Ещё один ребёнок", s:"", e:{c:1, m:-5, p:4, r:3, h:-3}},
       {a:"Остановиться на этом", s:"", e:{m:3, p:-1, r:-2}}]},
@@ -622,7 +682,7 @@ function maybeShock(L, rnd){
   let cost, text;
   if(roll < 0.45){
     cost = w * (0.35 + rnd() * 1.1);
-    text = "Незапланированная больница в семье.";
+    text = "Кто-то из семьи попал в больницу.";
   } else if(roll < 0.75){
     cost = w * (0.3 + rnd() * 0.9);
     text = "Работа или дело просело на несколько месяцев.";
@@ -778,140 +838,42 @@ function originLine(b){
          le + " " + plural(le, "год", "года", "лет") + ". Семья: " + wealthLine(b) + ".";
 }
 
-/* ================== СОСТОЯНИЕ И РЕНДЕР ================== */
-let L = null;
-let currentEvent = null;
-let currentMode = "free";
+
+/* ================== ХРОНИКА ================== */
 const $ = id => document.getElementById(id);
-const screens = ["s-start", "s-life", "s-death", "s-card", "s-archive", "s-how"];
+const screens = ["s-start","s-life","s-death","s-card","s-archive","s-how"];
+const ROMAN = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII"];
+
 function show(which){
   screens.forEach(s => $(s).classList.toggle("hidden", s !== which));
-  window.scrollTo(0, 0);
+  document.body.classList.toggle("dark", which === "s-death");
+  window.scrollTo(0,0);
 }
 function toast(msg){
   const t = $("toast");
   t.textContent = msg; t.classList.add("on");
-  clearTimeout(t._h);
-  t._h = setTimeout(() => t.classList.remove("on"), 1600);
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("on"), 1500);
 }
-
-function renderWho(){
-  $("who").innerHTML = "<b>" + L.b.name + "</b> · " + L.b.c.ru + " · " + L.age + " " +
-    plural(L.age, "год", "года", "лет");
-  $("stage").textContent = stageOf(L).name;
-}
-function renderScales(){
-  const rows = [["здоровье", L.h, "h"], ["счастье", L.p, "p"], ["знания", L.k, "k"], ["близкие", L.r, "r"]];
-  let html = rows.map(([lab, v]) => {
-    const w = Math.round(v);
-    return '<div class="scale"><div class="lab">' + lab + '</div>' +
-           '<div class="bar"><div class="fill" style="width:' + w + '%"></div></div>' +
-           '<div class="val">' + w + '</div></div>';
-  }).join("");
-  html += '<div class="moneyline"><span>Накопления</span><span class="' + (L.money < 0 ? "neg" : "") + '">' +
-          money(L.money) + '</span></div>';
-  $("scales").innerHTML = html;
-}
-function renderFeed(){
-  const last = L.log.slice(-4);
-  $("feed").innerHTML = last.map(en =>
-    '<div class="entry"><div class="yr">' + en.yr + '</div><div class="tx">' + en.tx + '</div></div>'
-  ).join("");
-}
-function renderEvent(){
-  if(!currentEvent){
-    $("event").innerHTML = '<h2>Дальше</h2><p>Год за годом. Нажми, чтобы продолжить.</p>' +
-      '<button class="opt" data-next="1">Прожить эти годы</button>';
-    return;
+function dots(v){
+  const n = clamp(v,0,100)/5;               // 20 делений по 5
+  const full = Math.floor(n), part = n - full;
+  let h = "";
+  for(let i=0;i<20;i++){
+    if(i < full) h += '<i class="on"></i>';
+    else if(i === full && part > 0.02) h += '<i class="on" style="opacity:' + (0.25 + part*0.75).toFixed(2) + '"></i>';
+    else h += "<i></i>";
   }
-  const ev = currentEvent;
-  let html = "<h2>" + ev.t + "</h2><p>" + ev.x + "</p>";
-  ev.o.forEach((opt, i) => {
-    html += '<button class="opt" data-i="' + i + '">' + opt.a +
-            (opt.s ? '<span class="sub">' + opt.s + "</span>" : "") + "</button>";
-  });
-  $("event").innerHTML = html;
+  return '<span class="dots">' + h + "</span>";
 }
 
-/* ================== ХОД ЖИЗНИ ================== */
-function startLife(seed){
-  L = newLife(seed, lastCountry());
-  rememberCountry(L.b.c.iso);
-  currentEvent = null;
-  show("s-life");
-  renderWho();
-  L.log.push({yr: "2026 · рождение", tx: originLine(L.b)});
-  renderScales();
-  renderFeed();
-  nextStage(true);
-}
+let L = null, currentEvent = null;
 
-function stageLabel(age){
-  return (L.b.birthYear + age) + " · " + STAGES[L.stage].name;
-}
-
-function nextStage(first){
-  if(L.stage >= STAGES.length){ finishLife(); return; }
-  const st = stageOf(L);
-  L.age = st.age;
-  renderWho();
-  const died = advanceMortality(L, Math.random, st.age, st.span);
-  if(died !== null){ finishLife(died); return; }
-  /* заработок и расходы за главу считаются один раз, при входе в неё */
-  const surplus = applyEconomy(L, st.span);
-  const label = stageLabel(st.age);
-  if(surplus < 0) L.log.push({yr: label, tx: "Расходы больше заработка."});
-  const shock = maybeShock(L, Math.random);
-  if(shock) L.log.push({yr: label, tx: shock.text + " Минус " + money(shock.cost) + ". На счету: " + money(L.money) + "."});
-  renderScales(); renderFeed();
-  currentEvent = pickEvent(L, Math.random, !first);
-  renderEvent();
-}
-
-function choose(i){
-  const ev = currentEvent;
-  const opt = ev.o[i];
-  const delta = moneyDelta(L, opt.e.m);
-  L.money += delta;
-  applyEffects(L, opt.e);
-  const st = stageOf(L);
-  const label = stageLabel(st.age);
-  let tx = opt.a + ".";
-  if(opt.s) tx += " " + opt.s + ".";
-  if(delta) tx += " (" + (delta > 0 ? "+" : "") + money(delta) + ")";
-  L.log.push({yr: label, tx});
-  currentEvent = null;
-  /* обязательная развилка не закрывает главу — после неё идёт ещё одно событие */
-  if(ev.prio){
-    const second = pickEvent(L, Math.random, false);
-    if(second){
-      currentEvent = second;
-      renderScales(); renderFeed(); renderEvent();
-      return;
-    }
-  }
-  L.stage++;
-  L.age = st.age + st.span;
-  renderScales(); renderFeed();
-  nextStage(false);
-}
-
-function finishLife(fixedAge, sudden){
-  const rnd = Math.random;
-  const age = fixedAge != null ? fixedAge : Math.min(101, L.age);
-  L.dead = true; L.deathAge = age; L.cause = causeFor(age, rnd);
-  saveLife();
-  renderDeath();
-  show("s-death");
-}
-
-/* ================== ЭКРАН СМЕРТИ ================== */
 function legacyLine(){
   const parts = [];
-  if(L.children) parts.push(L.children + " " + plural(L.children, "ребёнок", "ребёнка", "детей"));
-  if(L.students) parts.push(L.students + " " + plural(L.students, "ученик", "ученика", "учеников"));
-  if(L.houses) parts.push(L.houses + " " + plural(L.houses, "дом", "дома", "домов"));
-  if(L.letters) parts.push(L.letters + " " + plural(L.letters, "письмо", "письма", "писем"));
+  if(L.children) parts.push(L.children + " " + plural(L.children,"ребёнок","ребёнка","детей"));
+  if(L.students) parts.push(L.students + " " + plural(L.students,"ученик","ученика","учеников"));
+  if(L.houses) parts.push(L.houses + " " + plural(L.houses,"дом","дома","домов"));
+  if(L.letters) parts.push(L.letters + " " + plural(L.letters,"письмо","письма","писем"));
   if(L.helped) parts.push("забота о близких");
   if(L.money > 0) parts.push("сбережения " + money(L.money));
   if(L.money < 0) parts.push("долг " + money(Math.abs(L.money)));
@@ -919,205 +881,291 @@ function legacyLine(){
 }
 
 function peersStats(){
-  const n = 200;
-  const ages = [], moneys = [], kids = [];
-  for(let i = 0; i < n; i++){
-    const sim = autoRun(L.b.seed, (rnd, ev) => Math.floor(rnd() * ev.o.length), i + 1);
-    ages.push(sim.deathAge); moneys.push(sim.money); kids.push(sim.children);
+  const n = 200, ages = [], moneys = [];
+  for(let i=0;i<n;i++){
+    const sim = autoRun(L.b.seed, (rnd, ev) => Math.floor(rnd()*ev.o.length), i+1);
+    ages.push(sim.deathAge); moneys.push(sim.money);
   }
-  ages.sort((a, b) => a - b);
-  moneys.sort((a, b) => a - b);
-  return {
-    n,
-    median: ages[Math.floor(n / 2)],
-    young: Math.round(100 * ages.filter(a => a < 30).length / n),
-    max: ages[n - 1],
-    broke: Math.round(100 * moneys.filter(m => m <= 0).length / n)
-  };
+  ages.sort((a,b)=>a-b); moneys.sort((a,b)=>a-b);
+  return {n, median: ages[Math.floor(n/2)], young: Math.round(100*ages.filter(a=>a<30).length/n),
+          max: ages[n-1], broke: Math.round(100*moneys.filter(m=>m<=0).length/n)};
 }
 
+/* ---------- старт ---------- */
+function startLife(seed){
+  L = newLife(seed, lastCountry());
+  rememberCountry(L.b.c.iso);
+  currentEvent = null;
+  L.log.push({yr:"2026", tx: originLine(L.b)});
+  show("s-life");
+  renderHeader(); renderScales(); renderFeed();
+  nextStage(true);
+}
+
+function renderHeader(){
+  $("who-name").textContent = L.b.name;
+  $("who-meta").textContent = L.b.c.ru;
+  $("ch").textContent = "глава " + ROMAN[Math.min(L.stage+1,13)] + " / XIII";
+  $("age-num").textContent = L.age;
+  $("age-unit").textContent = plural(L.age,"год","года","лет");
+  $("stage").textContent = stageOf(L).name;
+}
+
+function renderScales(){
+  const rows = [["здоровье",L.h],["счастье",L.p],["знания",L.k],["близкие",L.r]];
+  let html = rows.map(([lab,v]) =>
+    '<div class="ledger-row"><span class="ledger-label">' + lab + '</span>' + dots(v) +
+    '<span class="ledger-val num">' + Math.round(v) + "</span></div>").join("");
+  html += '<div class="ledger-row money"><span class="ledger-label">' + (L.money < 0 ? "долг" : "накопления") + '</span>' +
+    '<span class="ledger-val num ' + (L.money<0?"neg":"") + '">' + money(L.money) + "</span></div>";
+  $("scales").innerHTML = html;
+}
+
+function renderFeed(){
+  const last = L.log.slice(-4);
+  $("feed").innerHTML = last.map(en =>
+    '<div class="chron-entry"><div class="chron-year">' + en.yr + '</div>' +
+    '<div class="chron-text">' + en.tx + "</div></div>").join("");
+}
+
+function renderEvent(){
+  if(!currentEvent){
+    $("event").innerHTML = '<div class="kicker">дальше</div><h2>Годы идут</h2>' +
+      '<div class="options"><button class="option next" data-next="1">' +
+      '<span class="opt-label">прожить</span><span class="opt-go">→</span></button></div>';
+    return;
+  }
+  const ev = currentEvent;
+  let html = '<div class="kicker">' + (ev.prio ? "развилка · выбор обязателен" : "событие") + "</div>";
+  html += "<h2>" + ev.t + "</h2><p>" + ev.x + "</p><div class=\"options\">";
+  ev.o.forEach((o,i) => {
+    html += '<button class="option" data-i="' + i + '"><span class="opt-idx num">' + (i+1) + "</span>" +
+      '<span class="opt-body"><span class="opt-label">' + o.a + "</span>" +
+      (o.s ? '<span class="opt-sub">' + o.s + "</span>" : "") + '</span><span class="opt-go">→</span></button>';
+  });
+  $("event").innerHTML = html + "</div>";
+}
+
+function stageLabel(age){
+  const y = L.b.birthYear + age, span = STAGES[L.stage].span;
+  return y + "–" + String(y + span).slice(2);
+}
+
+function nextStage(first){
+  if(L.stage >= STAGES.length){ finishLife(); return; }
+  const st = stageOf(L);
+  L.age = st.age;
+  renderHeader();
+  const died = advanceMortality(L, Math.random, st.age, st.span);
+  if(died !== null){ finishLife(died); return; }
+  const surplus = applyEconomy(L, st.span);
+  const label = stageLabel(st.age);
+  if(surplus < 0) L.log.push({yr: label, tx:"Расходы больше заработка."});
+  const shock = maybeShock(L, Math.random);
+  if(shock) L.log.push({yr: label, tx: shock.text + " (" + money(-shock.cost) + "). На счёте " + money(L.money) + "."});
+  renderScales(); renderFeed();
+  currentEvent = pickEvent(L, Math.random, !first);
+  renderEvent();
+  $("event").scrollIntoView({block:"nearest"});
+}
+
+function choose(i){
+  const ev = currentEvent, opt = ev.o[i];
+  const delta = moneyDelta(L, opt.e.m);
+  L.money += delta;
+  applyEffects(L, opt.e);
+  const st = stageOf(L);
+  let tx = opt.a;
+  if(opt.s) tx += ". " + opt.s.charAt(0).toUpperCase() + opt.s.slice(1);
+  if(delta) tx += " (" + (delta>0?"+":"") + money(delta) + ")";
+  L.log.push({yr: stageLabel(st.age), tx: tx + "."});
+  currentEvent = null;
+  if(ev.prio){
+    const second = pickEvent(L, Math.random, false);
+    if(second){ currentEvent = second; renderScales(); renderFeed(); renderEvent();
+      $("event").scrollIntoView({block:"nearest"}); return; }
+  }
+  L.stage++;
+  L.age = st.age + st.span;
+  renderScales(); renderFeed();
+  nextStage(false);
+}
+
+function finishLife(age){
+  const rnd = Math.random;
+  const a = age != null ? age : Math.min(101, L.age);
+  L.dead = true; L.deathAge = a; L.cause = causeFor(a, rnd);
+  saveLife();
+  renderDeath();
+  show("s-death");
+}
+
+/* ---------- смерть ---------- */
 function renderDeath(){
-  const b = L.b;
-  const peers = peersStats();
-  const le = Math.round(b.c.le);
-  const diff = L.deathAge - le;
+  const b = L.b, peers = peersStats();
+  const le = Math.round(b.c.le), diff = L.deathAge - le;
   const diffLine = diff === 0
     ? "Ровно средняя продолжительность жизни по стране — " + years(le) + "."
-    : (diff > 0 ? "Средняя продолжительность жизни здесь — " + years(le) +
-        ". Ты прожил на " + years(diff) + " больше."
-      : "Средняя продолжительность жизни здесь — " + years(le) +
-        ". Ты прожил на " + years(-diff) + " меньше.");
-
-  const timeline = L.log.slice(-6).map(en =>
-    '<div class="l"><span class="sm">' + en.yr + "</span> — " + en.tx + "</div>").join("");
+    : (diff > 0 ? "Средняя продолжительность жизни здесь — " + years(le) + ". Ты прожил на " + years(diff) + " больше."
+                : "Средняя продолжительность жизни здесь — " + years(le) + ". Ты прожил на " + years(-diff) + " меньше.");
+  const rows = [["здоровье",L.h],["счастье",L.p],["знания",L.k],["близкие",L.r]];
+  const chron = L.log.slice(-5).map(en =>
+    '<div class="chron-entry"><div class="chron-year">' + en.yr + '</div><div class="chron-text">' + en.tx + "</div></div>").join("");
 
   $("s-death").innerHTML =
-    '<div class="brand">жизнь окончена</div>' +
-    '<div class="big serif">' + L.deathAge + "</div>" +
-    '<div class="bigsub">' + plural(L.deathAge, "год жизни", "года жизни", "лет жизни") +
-      " · " + b.c.ru + "</div>" +
-    '<div class="block"><h3>запись</h3>' +
-      '<p class="l">' + b.name + ", " + b.place + ". " + (b.sex === "m" ? "Мужчина" : "Женщина") + ". " +
-      "Причина: " + L.cause + ".</p>" +
-      '<p class="quote" style="margin-top:10px">' + lastWords(L, Math.random) + "</p></div>" +
-    '<div class="block"><h3>чем закончилось</h3>' +
-      '<div class="nums" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-      [["здоровье", L.h], ["счастье", L.p], ["знания", L.k], ["близкие", L.r]].map(([k, v]) =>
-        '<div class="sm">' + k + '<b style="display:block;font-size:17px;color:var(--ink)">' + Math.round(v) + "</b></div>").join("") +
-      "</div><hr class='sep'><p class='l'>Осталось: " + legacyLine() + ".</p></div>" +
-    '<div class="block"><h3>сравнение</h3>' +
-      '<p class="l">' + diffLine + "</p>" +
-      '<p class="l sm" style="margin-top:8px">Если прожить эту же жизнь ещё двести раз, каждый раз выбирая иначе, ' +
-      "вышло бы так: обычно умирали в " + years(peers.median) + ", до 30 лет доживали " + nb(peers.young) +
-      "%, самый долгий век — " + years(peers.max) + ", а с нулём или в долгах заканчивали " + nb(peers.broke) +
-      "% жизней.</p></div>" +
-    '<div class="block"><h3>последние главы</h3>' + timeline + "</div>" +
-    '<button class="btn primary" id="btn-card">Карточка жизни</button>' +
-    '<div class="row" style="margin-top:10px"><button class="btn" id="btn-again">Ещё жизнь</button>' +
-    '<button class="btn" id="btn-arch2">Архив</button></div>';
+    '<div class="obit-top"><div class="wordmark">Жребий</div><div class="chapter">запись о жизни</div></div>' +
+    '<hr class="rule">' +
+    '<div class="obit-age num">' + L.deathAge + '<span class="obit-unit">' + plural(L.deathAge,"год","года","лет") + "</span></div>" +
+    '<div class="obit-place">' + b.place + " · " + b.c.ru + "</div>" +
+    '<p class="obit-quote">' + lastWords(L, Math.random) + "</p>" +
+    '<div class="obit-quote-by">последние слова</div>' +
+    '<div class="dl">' +
+      '<div class="dl-row"><div class="dl-k">кто</div><div class="dl-v">' + b.name + ", " + (b.sex==="m"?"мужчина":"женщина") + "</div></div>" +
+      '<div class="dl-row"><div class="dl-k">причина</div><div class="dl-v">' + L.cause + "</div></div>" +
+      '<div class="dl-row"><div class="dl-k">осталось</div><div class="dl-v">' + legacyLine() + "</div></div>" +
+    "</div>" +
+    '<div class="section-title">чем закончилось</div>' +
+    '<div class="ledger">' + rows.map(([lab,v]) =>
+      '<div class="ledger-row"><span class="ledger-label">' + lab + "</span>" + dots(v) +
+      '<span class="ledger-val num">' + Math.round(v) + "</span></div>").join("") + "</div>" +
+    '<div class="section-title" style="margin-top:26px">сравнение</div>' +
+    '<p style="font-size:16.5px;line-height:1.5;margin:0 0 8px">' + diffLine + "</p>" +
+    '<p style="font-size:14px;line-height:1.55;color:#b9ad99;margin:0 0 26px">Если прожить эту же жизнь ещё двести раз, каждый раз выбирая иначе, вышло бы так: обычно умирали в ' +
+      years(peers.median) + ", до 30 лет не доживали " + nb(peers.young) + "%, самый долгий век — " + years(peers.max) +
+      ", а с нулём или в долгах заканчивали " + nb(peers.broke) + "% жизней.</p>" +
+    '<div class="section-title">последние главы</div><div class="chronicle" style="margin-top:4px">' + chron + "</div>" +
+    '<button class="btn" id="btn-card"><span>Карточка жизни</span><span class="arrow">→</span></button>' +
+    '<div style="height:10px"></div>' +
+    '<button class="btn ghost" id="btn-again"><span>Ещё жизнь</span><span class="arrow">→</span></button>' +
+    '<div class="links" style="justify-content:center"><button id="btn-arch2">Прожитые жизни</button></div>';
 
   $("btn-card").onclick = () => { renderCard(peers); show("s-card"); };
-  $("btn-again").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  $("btn-again").onclick = () => startLife((Date.now() ^ (Math.random()*1e9)) >>> 0);
   $("btn-arch2").onclick = () => { renderArchive(); show("s-archive"); };
 }
 
-/* ================== КАРТОЧКА ================== */
+/* ---------- карточка ---------- */
 function cardText(){
   const b = L.b;
-  return [
-    "ЖРЕБИЙ",
-    b.c.ru + ", " + b.birthYear + " · " + (b.sex === "m" ? "мужчина" : "женщина"),
-    L.deathAge + " " + plural(L.deathAge, "год", "года", "лет") + " · " + placePhrase(b),
+  return ["ЖРЕБИЙ",
+    b.c.ru + ", " + b.birthYear + " · " + (b.sex==="m"?"мужчина":"женщина"),
+    L.deathAge + " " + plural(L.deathAge,"год","года","лет") + " · " + b.place,
     "",
-    "Здоровье " + Math.round(L.h) + " · Счастье " + Math.round(L.p) +
-      " · Знания " + Math.round(L.k) + " · Близкие " + Math.round(L.r),
+    "Здоровье " + Math.round(L.h) + " · Счастье " + Math.round(L.p) + " · Знания " + Math.round(L.k) + " · Близкие " + Math.round(L.r),
     "Осталось: " + legacyLine(),
     "",
-    "А как пройдёт твоя?"
-  ].join("\n");
+    "А как пройдёт твоя?"].join("\n");
+}
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
+    ta.select(); document.execCommand("copy"); ta.remove(); }
 }
 
 function renderCard(peers){
-  const b = L.b;
-  peers = peers || peersStats();
+  const b = L.b; peers = peers || peersStats();
+  const rows = [["здоровье",L.h],["счастье",L.p],["знания",L.k],["близкие",L.r]];
   $("s-card").innerHTML =
-    '<div class="brand">карточка жизни</div>' +
-    '<div class="card">' +
-      '<div class="brand">жребий</div>' +
-      '<p class="nm">' + L.deathAge + " " + plural(L.deathAge, "год", "года", "лет") + " жизни</p>" +
-      '<p class="loc">' + b.name + " · " + b.c.ru + " · " + b.place + "</p>" +
-      '<hr class="sep">' +
-      '<div class="nums">' +
-        [["здоровье", L.h], ["счастье", L.p], ["знания", L.k], ["близкие", L.r]].map(([k, v]) =>
-          "<div>" + k + "<b>" + Math.round(v) + "</b></div>").join("") +
-      "</div>" +
-      '<hr class="sep">' +
-      '<p class="l" style="font-size:14px;color:#4a453d;margin:0">Осталось: ' + legacyLine() + ".</p>" +
-      '<p class="l" style="font-size:14px;color:#4a453d;margin:8px 0 0">Причина смерти: ' + L.cause + ".</p>" +
-      '<div class="foot">Эту же жизнь можно прожить иначе — ' + nb(peers.n) +
-        " раз, каждый раз с другими решениями. Обычно умирали в " + years(peers.median) + ".</div>" +
+    '<div class="masthead"><div class="wordmark">Жребий</div><div class="chapter">карточка</div></div><hr class="rule">' +
+    '<div style="height:20px"></div>' +
+    '<div class="poster">' +
+      '<div class="wordmark">жребий</div>' +
+      '<div class="poster-age num">' + L.deathAge + "</div>" +
+      '<div class="poster-age-unit">' + plural(L.deathAge,"год жизни","года жизни","лет жизни") + "</div>" +
+      '<div class="poster-name">' + b.name + "</div>" +
+      '<div class="poster-place">' + b.c.ru + " · " + b.place + " · причина: " + L.cause + "</div>" +
+      rows.map(([lab,v]) =>
+        '<div class="ledger-row" style="grid-template-columns:78px 1fr 30px"><span class="ledger-label">' + lab + "</span>" +
+        dots(v) + '<span class="ledger-val num">' + Math.round(v) + "</span></div>").join("") +
+      '<div class="poster-foot">Осталось: ' + legacyLine() + ".<br>Эту же жизнь можно прожить иначе — " +
+        nb(peers.n) + " раз. Обычно умирали в " + years(peers.median) + ".</div>" +
     "</div>" +
-    '<button class="btn primary" id="btn-share">Поделиться</button>' +
-    '<div class="row" style="margin-top:10px"><button class="btn" id="btn-copy">Копировать</button>' +
-    '<button class="btn" id="btn-again2">Ещё жизнь</button></div>' +
-    '<button class="btn ghost" id="btn-home">На главную</button>';
+    '<button class="btn" id="btn-share"><span>Поделиться</span><span class="arrow">→</span></button>' +
+    '<div style="height:10px"></div>' +
+    '<button class="btn ghost" id="btn-copy"><span>Скопировать текст</span><span class="arrow"></span></button>' +
+    '<div style="height:10px"></div>' +
+    '<button class="btn ghost" id="btn-again2"><span>Ещё жизнь</span><span class="arrow">→</span></button>' +
+    '<div class="links" style="justify-content:center"><button id="btn-home">На главную</button></div>';
 
   $("btn-share").onclick = async () => {
     const text = cardText();
-    if(navigator.share){
-      try{ await navigator.share({title: "Жребий", text}); }
-      catch(e){ /* отменили — не ошибка */ }
-    } else {
-      await copyText(text);
-      toast("Текст скопирован");
-    }
+    if(navigator.share){ try{ await navigator.share({title:"Жребий", text}); }catch(e){} }
+    else { await copyText(text); toast("Текст скопирован"); }
   };
   $("btn-copy").onclick = async () => { await copyText(cardText()); toast("Текст скопирован"); };
-  $("btn-again2").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  $("btn-again2").onclick = () => startLife((Date.now() ^ (Math.random()*1e9)) >>> 0);
   $("btn-home").onclick = () => show("s-start");
 }
 
-async function copyText(t){
-  try{ await navigator.clipboard.writeText(t); }
-  catch(e){
-    const ta = document.createElement("textarea");
-    ta.value = t; document.body.appendChild(ta); ta.select();
-    document.execCommand("copy"); ta.remove();
-  }
-}
-
-/* ================== АРХИВ ================== */
+/* ---------- архив ---------- */
 const LS = "zherebey.v1";
-function loadArchive(){
-  try{ return JSON.parse(localStorage.getItem(LS) || "[]"); }catch(e){ return []; }
-}
+function loadArchive(){ try{ return JSON.parse(localStorage.getItem(LS) || "[]"); }catch(e){ return []; } }
 function saveLife(){
   const arr = loadArchive();
-  arr.unshift({
-    at: Date.now(), country: L.b.c.ru, name: L.b.name, age: L.deathAge,
-    h: Math.round(L.h), p: Math.round(L.p), k: Math.round(L.k), r: Math.round(L.r),
-    money: Math.round(L.money), cause: L.cause, legacy: legacyLine()
-  });
-  try{ localStorage.setItem(LS, JSON.stringify(arr.slice(0, 60))); }catch(e){}
+  arr.unshift({at:Date.now(), country:L.b.c.ru, name:L.b.name, age:L.deathAge,
+    h:Math.round(L.h), p:Math.round(L.p), k:Math.round(L.k), r:Math.round(L.r),
+    money:Math.round(L.money), cause:L.cause, legacy:legacyLine()});
+  try{ localStorage.setItem(LS, JSON.stringify(arr.slice(0,60))); }catch(e){}
 }
 function renderArchive(){
   const arr = loadArchive();
-  let html = '<div class="brand">архив</div><h1 style="font-size:30px">Прожитые жизни</h1>';
+  let html = '<div class="masthead"><div class="wordmark">Жребий</div><div class="chapter">архив</div></div><hr class="rule">' +
+    '<h1 style="font-size:34px;margin:26px 0 18px">Прожитые жизни</h1>';
   if(!arr.length){
     html += '<p class="lede">Пока пусто. Первая жизнь займёт три минуты.</p>';
   } else {
-    html += '<div class="block list">' + arr.map(x => {
-      const d = new Date(x.at);
-      const ds = d.toLocaleDateString("ru-RU", {day:"2-digit", month:"2-digit"});
-      return '<div class="item"><div><b>' + x.age + "</b> " +
-        plural(x.age, "год", "года", "лет") + " · " + x.country +
-        '<div class="sm" style="font-size:12.5px;color:var(--faint)">' + x.legacy + "</div></div>" +
-        '<div class="d">' + ds + "</div></div>";
-    }).join("") + "</div>";
+    html += arr.map(x => '<div class="arch-row"><div class="arch-age num">' + x.age + "</div>" +
+      '<div><div class="arch-body">' + x.legacy + '</div><div class="arch-meta">' + x.country + " · " +
+      x.cause + " · " + new Date(x.at).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit"}) + "</div></div></div>").join("");
   }
-  html += '<button class="btn primary" id="btn-again3">Новая жизнь</button>' +
-    '<button class="btn ghost" id="btn-clear">Очистить архив</button>' +
-    '<button class="btn ghost" id="btn-home2">На главную</button>';
+  html += '<div style="height:22px"></div><button class="btn" id="btn-again3"><span>Новая жизнь</span><span class="arrow">→</span></button>' +
+    '<div class="links"><button id="btn-clear">Очистить архив</button><button id="btn-home2">На главную</button></div>';
   $("s-archive").innerHTML = html;
-  $("btn-again3").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
-  $("btn-clear").onclick = () => {
-    if(confirm("Удалить все сохранённые жизни? На телефоне они не восстановятся.")){
-      localStorage.removeItem(LS); renderArchive();
-    }
-  };
+  $("btn-again3").onclick = () => startLife((Date.now() ^ (Math.random()*1e9)) >>> 0);
+  $("btn-clear").onclick = () => { if(confirm("Удалить все сохранённые жизни?")){ localStorage.removeItem(LS); renderArchive(); } };
   $("btn-home2").onclick = () => show("s-start");
 }
 
-/* ================== СОБЫТИЯ UI ================== */
+/* ---------- правила ---------- */
+function renderHow(){
+  $("s-how").innerHTML =
+    '<div class="masthead"><div class="wordmark">Жребий</div><div class="chapter">правила</div></div><hr class="rule">' +
+    '<h1 style="font-size:34px;margin:26px 0 8px">Как это устроено</h1>' +
+    '<div class="how">' +
+      "<h3>старт не выбирается</h3><p>Страна, семья, достаток и здоровье — из распределений, не из настроек. Выборы меняют шансы, а не гарантируют исход.</p>" +
+      "<h3>тринадцать глав</h3><p>Каждый выбор двигает четыре шкалы: здоровье, счастье, знания, близкие. Деньги считаются отдельно — заработком, расходами и потерями.</p>" +
+      "<h3>деньги не растут сами</h3><p>Доход зависит от страны, знаний и пола, расходы — от возраста и здоровья. Часть жизней заканчивается в нуле или в долге.</p>" +
+      "<h3>без тяжёлого без предупреждения</h3><p>Возраст 15+. Сцен насилия и способов уйти из жизни в этой версии нет — это позиция, а не забывчивость.</p>" +
+      "<h3>откуда числа</h3><p class=\"src\">Продолжительность жизни, младенческая смертность, ВВП на человека по паритету и число рождений — Всемирный банк, 2023, выгрузка 01.11.2026. Десять стран. Вес страны — доля рождений, сглаженная корнем: иначе половина жизней была бы индийской. Достаток семьи — логнормальное распределение вокруг ВВП: это модель, а не данные о человеке.</p>" +
+    "</div>" +
+    '<div style="height:26px"></div><button class="btn ghost" id="btn-back-start"><span>Назад</span><span class="arrow">←</span></button>';
+  $("btn-back-start").onclick = () => show("s-start");
+}
+
+/* ---------- события ---------- */
 $("event").addEventListener("click", e => {
-  const b = e.target.closest(".opt");
+  const b = e.target.closest(".option");
   if(!b) return;
   if(b.dataset.next){ nextStage(false); return; }
   const i = Number(b.dataset.i);
   if(!Number.isNaN(i) && currentEvent) choose(i);
 });
-$("btn-born").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+$("btn-born").onclick = () => startLife((Date.now() ^ (Math.random()*1e9)) >>> 0);
 $("btn-archive").onclick = () => { renderArchive(); show("s-archive"); };
-$("btn-how").onclick = () => show("s-how");
-$("btn-back-start").onclick = () => show("s-start");
+$("btn-how").onclick = () => { renderHow(); show("s-how"); };
 
-/* проверка свежести сборки */
+/* свежесть сборки */
 (function(){
   const build = document.documentElement.dataset.build;
-  fetch("version.txt?_=" + Date.now(), {cache: "no-store"})
+  fetch("version.txt?_=" + Date.now(), {cache:"no-store"})
     .then(r => r.ok ? r.text() : null)
-    .then(v => {
-      v = (v || "").trim();
-      if(v && v !== build && !location.search.includes("v=" + v)){
-        location.replace(location.pathname + "?v=" + v);
-      }
-    })
-    .catch(() => {});
+    .then(v => { v = (v||"").trim();
+      if(v && v !== build && !location.search.includes("v=" + v)) location.replace(location.pathname + "?v=" + v);
+    }).catch(()=>{});
 })();
 
-/* отладка: доступ к движку из консоли */
 window.ZH = {newLife, autoRun, peersStats, COUNTRIES, EVENTS, STAGES, makeBirth, deathProb,
-  setLife: l => { L = l; }, getLife: () => L};
+  setLife:l=>{L=l;}, getLife:()=>L};
 </script>
 </body>
 </html>

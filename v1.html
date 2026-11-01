@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="ru" data-build="20261101-2">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f4ee">
+<title>Жребий</title>
+<style>
+  :root{
+    --bg1:#faf8f3; --bg2:#f7f4ee; --bg3:#eee9df;
+    --card:#ffffff; --line:#e7e1d5;
+    --ink:#211e19; --muted:#7d766a; --faint:#a29a8b;
+    --acc:#4a7c59; --accfill:#eaf1e8; --accline:#cfe0cd;
+    --warn:#9a5b3f;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,var(--bg1),var(--bg2) 40%,var(--bg3));
+    background-attachment:fixed;
+    font-size:16px; line-height:1.5;
+    min-height:100dvh;
+  }
+  .wrap{
+    max-width:440px;margin:0 auto;
+    padding:calc(18px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+  }
+  .hidden{display:none !important}
+  .serif{font-family:"Iowan Old Style",Palatino,Georgia,serif}
+
+  /* ---------- стартовый экран ---------- */
+  .brand{font-size:12px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+  h1{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:400;font-size:40px;line-height:1.08;margin:14px 0 10px;letter-spacing:-.01em}
+  .lede{color:var(--muted);font-size:16px;margin:0 0 22px}
+  .btn{
+    display:block;width:100%;text-align:center;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);font:inherit;font-size:17px;padding:16px 18px;border-radius:16px;
+    box-shadow:0 1px 2px rgba(33,30,25,.035);cursor:pointer;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--accfill);border-color:var(--accline);color:#2f5239;font-weight:600}
+  .btn.ghost{background:transparent;border-color:transparent;color:var(--muted);box-shadow:none;font-size:15px;padding:12px}
+  .row{display:flex;gap:10px}
+  .row .btn{flex:1}
+  .hint{font-size:12.5px;color:var(--faint);text-align:center;margin:22px 0 0}
+
+  /* ---------- экран жизни ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .who{font-size:14px;color:var(--muted)}
+  .who b{color:var(--ink);font-weight:600}
+  .stage{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+
+  .scales{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 1px 2px rgba(33,30,25,.035);margin-bottom:12px}
+  .scale{display:grid;grid-template-columns:72px 1fr 26px;gap:10px;align-items:center;padding:4px 0}
+  .scale .lab{font-size:13px;color:var(--muted)}
+  .scale .bar{height:7px;border-radius:99px;background:#f0ece2;overflow:hidden}
+  .scale .fill{height:100%;border-radius:99px;background:var(--acc);transition:width .35s ease}
+  .scale .val{font-size:12px;color:var(--faint);text-align:right;font-variant-numeric:tabular-nums}
+  .moneyline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid #f2eee4}
+  .moneyline .neg{color:var(--warn)}
+
+  .feed{margin:0 0 12px}
+  .entry{border-left:2px solid #eae4d7;padding:0 0 12px 12px;margin-bottom:2px}
+  .entry:last-child{border-left-color:var(--accline)}
+  .entry .yr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .entry .tx{font-size:14.5px;color:#4a453d;margin-top:2px}
+
+  .event{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 1px 2px rgba(33,30,25,.035)}
+  .event h2{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:400;font-size:21px;margin:0 0 8px;line-height:1.25}
+  .event p{margin:0 0 14px;font-size:15px;color:#4a453d}
+  .opt{
+    display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fdfcf9;
+    font:inherit;font-size:15px;color:var(--ink);padding:13px 14px;border-radius:13px;margin-bottom:8px;cursor:pointer;
+  }
+  .opt:last-child{margin-bottom:0}
+  .opt:active{background:var(--accfill);border-color:var(--accline)}
+  .opt .sub{display:block;font-size:12.5px;color:var(--faint);margin-top:2px}
+
+  /* ---------- смерть ---------- */
+  .big{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:76px;line-height:1;margin:6px 0 0;font-weight:400}
+  .bigsub{font-size:14px;color:var(--muted);margin:2px 0 20px}
+  .block{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(33,30,25,.035)}
+  .block h3{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .block .l{font-size:15px;margin:0 0 6px}
+  .block .l:last-child{margin-bottom:0}
+  .block .sm{font-size:13.5px;color:var(--muted)}
+  .quote{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:21px;line-height:1.35;margin:0}
+
+  /* ---------- карточка ---------- */
+  .card{
+    background:linear-gradient(180deg,#fffdf8,#fdfbf5);border:1px solid var(--line);border-radius:18px;
+    padding:20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(33,30,25,.04)
+  }
+  .card .brand{margin-bottom:10px}
+  .card .nm{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:26px;line-height:1.2;margin:0 0 4px}
+  .card .loc{font-size:14px;color:var(--muted);margin:0 0 14px}
+  .card .nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  .card .nums div{font-size:13px;color:var(--muted)}
+  .card .nums b{display:block;font-size:17px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .card .foot{font-size:11px;color:var(--faint);margin-top:12px}
+  hr.sep{border:0;border-top:1px solid #f0ebdf;margin:12px 0}
+
+  .list .item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #f2eee4;font-size:14px}
+  .list .item:last-child{border-bottom:0}
+  .list .item .d{color:var(--faint);font-size:12.5px;white-space:nowrap}
+  .how p{font-size:15px;color:#4a453d;margin:0 0 10px}
+  .how .src{font-size:12px;color:var(--faint);line-height:1.45}
+  .toast{
+    position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);
+    background:#211e19;color:#fdfbf5;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;
+    transition:opacity .2s;pointer-events:none;
+  }
+  .toast.on{opacity:.95}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- СТАРТ -->
+  <section id="s-start">
+    <div class="brand">жребий</div>
+    <h1>Ты не выбираешь,<br>где родиться.</h1>
+    <p class="lede">Одна жизнь от рождения до смерти. Начало — по реальной статистике. Дальше решаешь ты, но не всё.</p>
+    <button class="btn primary" id="btn-born">Родиться</button>
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost" id="btn-archive">Прожитые жизни</button>
+      <button class="btn ghost" id="btn-how">Как это работает</button>
+    </div>
+    <p class="hint">Три минуты. Тринадцать глав. Без аккаунта и без рекламы.</p>
+  </section>
+
+  <!-- ЖИЗНЬ -->
+  <section id="s-life" class="hidden">
+    <div class="topbar">
+      <div class="who" id="who"></div>
+      <div class="stage" id="stage"></div>
+    </div>
+    <div class="scales" id="scales"></div>
+    <div class="feed" id="feed"></div>
+    <div class="event" id="event"></div>
+  </section>
+
+  <!-- СМЕРТЬ -->
+  <section id="s-death" class="hidden"></section>
+
+  <!-- КАРТОЧКА -->
+  <section id="s-card" class="hidden"></section>
+
+  <!-- АРХИВ -->
+  <section id="s-archive" class="hidden"></section>
+
+  <!-- КАК ЭТО РАБОТАЕТ -->
+  <section id="s-how" class="hidden">
+    <div class="brand">как это работает</div>
+    <h1 style="font-size:28px">Четыре правила</h1>
+    <div class="how">
+      <p><b>Старт не выбирается.</b> Страна, семья, достаток и здоровье — из распределений, не из настроек. Выборы в жизни меняют шансы, а не гарантируют исход.</p>
+      <p><b>Одна жизнь — одна история.</b> Тринадцать глав, каждый выбор двигает четыре шкалы: здоровье, счастье, знания, близкие. Деньги считаются отдельно — заработком, расходами, наследством и потерями.</p>
+      <p><b>Деньги не растут сами.</b> Доход зависит от страны, знаний и пола, расходы — от возраста и здоровья. Часть жизней заканчивается в нуле или в долге, потому что так заканчивается часть настоящих.</p>
+      <p><b>Тяжёлого без предупреждения нет.</b> Возраст 15+. Сцен насилия и способов уйти из жизни в этой версии нет — это позиция, а не забывчивость.</p>
+    </div>
+    <div class="block" style="margin-top:16px">
+      <h3>откуда числа</h3>
+      <p class="src">Ожидаемая продолжительность жизни, младенческая смертность, ВВП на человека по паритету и число рождений — Всемирный банк, 2023, выгрузка 01.11.2026. Десять стран: Индия, Нигерия, США, Бразилия, Египет, Индонезия, Россия, Япония, Германия, Кипр. Вес страны — по доле рождений, но сглаженный корнем: в реальности Индия даёт около каждого шестого рождения в мире, здесь — примерно каждое третье. Без этого сглаживания половина жизней была бы индийской. Кипр и Япония выпадают редко, потому что там мало рождений. Достаток семьи — логнормальное распределение вокруг ВВП на человека: это модель, а не данные по конкретному человеку.</p>
+    </div>
+    <button class="btn" id="btn-back-start">Назад</button>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ================== ДАННЫЕ СТРАН ================== */
+const COUNTRIES = [
+  {iso:"IND", ru:"Индия", le:72.0, gdp:9853, imr:24.5, share:49.92, rural:0.55,
+   cities:["Мумбаи","Дели","Ченнаи","Калькутта","Джайпур"],
+   villages:["деревня в Бихаре","деревня в Уттар-Прадеше","посёлок под Мадураем"],
+   m:["Арджун","Рахул","Викрам","Санджай","Имран"], f:["Прия","Айша","Лакшми","Ниша","Сита"],
+   s:["Шарма","Патель","Кумар","Сингх","Рао","Наир"]},
+  {iso:"NGA", ru:"Нигерия", le:54.5, gdp:8712, imr:70.1, share:16.15, rural:0.48,
+   cities:["Лагос","Абуджа","Кано","Ибадан","Порт-Харкорт"],
+   villages:["деревня в штате Кадуна","деревня в Ойо","посёлок под Энугу"],
+   m:["Чинеду","Эмека","Тунде","Ибрагим","Сегун"], f:["Нгози","Амина","Фунми","Чиома","Халима"],
+   s:["Окафор","Адебайо","Балогун","Мухаммед","Эзе"]},
+  {iso:"IDN", ru:"Индонезия", le:71.1, gdp:15428, imr:15.7, share:9.64, rural:0.43,
+   cities:["Джакарта","Сурабая","Бандунг","Медан","Макассар"],
+   villages:["деревня на Яве","деревня на Сулавеси","посёлок на Бали"],
+   m:["Буди","Агус","Ризал","Джокан","Эко"], f:["Сити","Деви","Ани","Рати","Пути"],
+   s:["Виджая","Сутоно","Хади","Пратама","Санти"]},
+  {iso:"USA", ru:"США", le:78.4, gdp:82587, imr:5.5, share:7.75, rural:0.20,
+   cities:["Чикаго","Хьюстон","Филадельфия","Финикс","Атланта"],
+   villages:["городок в Огайо","городок в Миссури","пригород под Денвером"],
+   m:["Майкл","Дастин","Тайлер","Андре","Хосе"], f:["Эшли","Мэри","Джессика","Тэйлор","Глория"],
+   s:["Смит","Джонсон","Рэйес","Уильямс","Браун"]},
+  {iso:"BRA", ru:"Бразилия", le:75.8, gdp:21193, imr:12.4, share:5.59, rural:0.13,
+   cities:["Сан-Паулу","Рио-де-Жанейро","Салвадор","Форталеза","Порту-Алегри"],
+   villages:["городок в Минас-Жерайс","посёлок в Баии","деревня в Сеаре"],
+   m:["Жуан","Педро","Лукас","Рафаэл","Тиаго"], f:["Мария","Ана","Камила","Жулиана","Беатрис"],
+   s:["Силва","Сантос","Оливейра","Соуза","Лима"]},
+  {iso:"EGY", ru:"Египет", le:71.6, gdp:18540, imr:21.3, share:5.17, rural:0.57,
+   cities:["Каир","Александрия","Гиза","Мансура","Асьют"],
+   villages:["деревня в Дельте","деревня в Сохаге","посёлок под Тантой"],
+   m:["Махмуд","Ахмед","Мустафа","Карим","Тарек"], f:["Фатима","Мона","Нур","Сальма","Ясмин"],
+   s:["Хасан","Ибрагим","эль-Сайед","Фахми","Абдель"]},
+  {iso:"RUS", ru:"Россия", le:73.3, gdp:44299, imr:4.2, share:2.66, rural:0.25,
+   cities:["Москва","Петербург","Екатеринбург","Новосибирск","Казань"],
+   villages:["рабочий посёлок в Свердловской области","село в Воронежской области","городок в Забайкалье"],
+   m:["Андрей","Дмитрий","Егор","Илья","Сергей"], f:["Ольга","Анастасия","Марина","Ирина","Дарья"],
+   s:["Соколов","Морозов","Кузнецов","Волков","Лебедев"]},
+  {iso:"JPN", ru:"Япония", le:84.0, gdp:52726, imr:1.8, share:1.61, rural:0.08,
+   cities:["Токио","Осака","Нагоя","Саппоро","Китакюсю"],
+   villages:["городок в префектуре Акита","посёлок на Хоккайдо","деревня в Симанэ"],
+   m:["Харуто","Кэнта","Рюсэй","Дайки","Сёта"], f:["Юй","Аой","Хана","Мисаки","Сакура"],
+   s:["Сато","Судзуки","Такахаси","Ватaнабэ","Ито"]},
+  {iso:"DEU", ru:"Германия", le:81.0, gdp:72262, imr:3.1, share:1.49, rural:0.22,
+   cities:["Берлин","Гамбург","Мюнхен","Кёльн","Лейпциг"],
+   villages:["городок в Саксонии","посёлок в Баварии","деревня в Шлезвиг-Гольштейне"],
+   m:["Лукас","Йонас","Феликс","Мориц","Эмре"], f:["Лена","Анна","Софи","Мила","Клара"],
+   s:["Мюллер","Шнайдер","Фишер","Вебер","Хофман"]},
+  {iso:"CYP", ru:"Кипр", le:81.6, gdp:59875, imr:3.8, share:0.03, rural:0.33,
+   cities:["Лимасол","Никосия","Пафос","Ларнака"],
+   villages:["деревня в Пафосском районе","деревня под Никосией","посёлок в Ларнакском районе"],
+   m:["Андреас","Христос","Павлос","Михалис","Яннис"], f:["Мария","Элени","Андреа","Христина","София"],
+   s:["Георгиу","Христофору","Киприану","Пападопулос","Николау"]}
+];
+
+/* ================== ГЛАВЫ ================== */
+const STAGES = [
+  {age:0,  span:5,  name:"первые годы"},
+  {age:5,  span:6,  name:"школа"},
+  {age:11, span:5,  name:"подростки"},
+  {age:16, span:4,  name:"после школы"},
+  {age:20, span:6,  name:"начало"},
+  {age:26, span:7,  name:"около тридцати"},
+  {age:33, span:7,  name:"тридцать с лишним"},
+  {age:40, span:8,  name:"сорок"},
+  {age:48, span:8,  name:"около пятидесяти"},
+  {age:56, span:9,  name:"пятьдесят с лишним"},
+  {age:65, span:8,  name:"на пенсии"},
+  {age:73, span:8,  name:"семьдесят"},
+  {age:81, span:12, name:"последние годы"}
+];
+
+/* ================== СОБЫТИЯ ==================
+   st — глава, cond — кому доступно, o — варианты.
+   Эффекты: h здоровье, p счастье, k знания, r близкие,
+   m деньги в месячных зарплатах страны, c дети, st ученики,
+   ho дом, le письма/книги, he помог кому-то. */
+const EVENTS = [
+  /* 0 — первые годы */
+  {id:"e0a", st:0, t:"Первый год",
+   x:"Зима выдалась мокрая, в комнате холодно, ребёнок кашляет третью неделю. Мать не спит, отец считает деньги до зарплаты.",
+   o:[{a:"Врач и антибиотики", s:"дорого, но вытащило", e:{h:5, m:-2}},
+      {a:"Ждать, как ждали бабушки", s:"обошлось, но кашель остался на всю жизнь", e:{h:-6}}]},
+  {id:"e0b", st:0, t:"Двор",
+   x:"Лет с четырёх — двор: пыль, чужие велосипеды, старшие ребята. До темноты можно не возвращаться.",
+   o:[{a:"Гонять с ребятами до темноты", s:"", e:{h:4, p:4, r:3}},
+      {a:"Сидеть с книжкой, взятой у соседки", s:"", e:{k:6, p:2, r:-2}},
+      {a:"Нянчить младших", s:"", e:{r:6, p:-1, k:-1}}]},
+  {id:"e0c", st:0, t:"Дом пустеет",
+   x:"Отец уезжает на заработки, возвращается раз в полгода. Денег больше, за столом — тише.",
+   o:[{a:"Ждать писем и звонков", s:"", e:{m:3, r:-3, p:-2}},
+      {a:"Привыкнуть жить без него", s:"", e:{p:1, r:-5, m:2}}]},
+  {id:"e0d", st:0, cond:b=>b.rural||b.wealth<0.8, t:"Вода и дрова",
+   x:"Воду носят вёдрами, дом топят чем придётся. Работа по дому начинается раньше, чем школа.",
+   o:[{a:"Таскать воду вместе со всеми", s:"спина привыкла рано", e:{h:-2, r:4}},
+      {a:"Сбегать к реке, пока не позвали", s:"", e:{p:5, h:2, r:-3}}]},
+  {id:"e0e", st:0, cond:b=>b.wealth>1.6, t:"Дом полон людей",
+   x:"Родители водят гостей, в доме пахнет чужим парфюмом. Ребёнка показывают, как хорошую вещь.",
+   o:[{a:"Сидеть со взрослыми и слушать", s:"", e:{k:4, r:2, p:-2}},
+      {a:"Уйти в свою комнату", s:"", e:{p:3, r:-2, k:1}}]},
+
+  /* 1 — школа */
+  {id:"e1a", st:1, t:"Учительница",
+   x:"Математичка задерживает после уроков и даёт задачи на неделю вперёд. Говорит: «Тут есть голова».",
+   o:[{a:"Ходить на эти занятия", s:"", e:{k:8, p:2, r:-1}},
+      {a:"Пропускать, чтобы не дразнили", s:"", e:{k:-3, r:4, p:1}}]},
+  {id:"e1b", st:1, t:"Плата за школу",
+   x:"Форма, тетради, взносы — к сентябрю сумма, которой в доме нет.",
+   o:[{a:"Просить у родни и отдавать", s:"", e:{m:-3, k:5, r:-2}},
+      {a:"Не ходить месяц, пока не наскребут", s:"", e:{k:-4, h:-2, p:-3}},
+      {a:"Работать после уроков", s:"", e:{m:2, k:1, h:-3, p:-1}}]},
+  {id:"e1c", st:1, t:"Драка",
+   x:"Старший класс отбирает деньги на обед. Можно смолчать, можно дать сдачи и получить вдвое.",
+   o:[{a:"Дать сдачи", s:"", e:{h:-4, r:3, p:4}},
+      {a:"Смолчать и обходить", s:"", e:{p:-5, h:1, r:-2}},
+      {a:"Рассказать отцу", s:"", e:{r:3, p:-2, h:2}}]},
+  {id:"e1d", st:1, t:"Летняя работа",
+   x:"Каникулы — три месяца, которые можно провести у воды или за прилавок у тётки.",
+   o:[{a:"К тётке за прилавок", s:"первая своя копейка", e:{m:3, k:2, p:-2, h:-1}},
+      {a:"К воде и в футбол", s:"", e:{h:5, p:5}}]},
+
+  /* 2 — подростки */
+  {id:"e2a", st:2, t:"Экзамены",
+   x:"От этих оценок зависит, куда можно пойти дальше. В классе списывают все.",
+   o:[{a:"Сидеть над учебниками", s:"", e:{k:9, p:-3, h:-2}},
+      {a:"Списать и выдохнуть", s:"", e:{k:2, p:3, r:1}},
+      {a:"Забить", s:"", e:{k:-6, p:4, r:2}}]},
+  {id:"e2b", st:2, t:"Первое чувство",
+   x:"Лет пятнадцать, и всё вокруг держится на одном человеке: его голос, его куртка, его «привет» в коридоре.",
+   o:[{a:"Признаться", s:"", e:{p:7, r:4, k:-2}},
+      {a:"Молчать и смотреть издалека", s:"", e:{p:-4, k:1}}]},
+  {id:"e2c", st:2, t:"Компания",
+   x:"Ребята со двора зовут на дело: разобрать чужой гараж, покататься на чужой машине. «Все свои, никто не сдаст».",
+   o:[{a:"Пойти", s:"", e:{p:3, r:4, h:-3, m:1}},
+      {a:"Отказаться", s:"", e:{r:-5, p:-2, k:1}}]},
+  {id:"e2d", st:2, t:"Тело",
+   x:"Рост не тот, прыщи, чужие фотографии в телефоне и разговоры, где нечего сказать.",
+   o:[{a:"Спортзал или турник во дворе", s:"", e:{h:6, p:3}},
+      {a:"Сидеть в телефоне и сравнивать", s:"", e:{p:-6, h:-3, k:1}}]},
+
+  /* 3 — после школы */
+  {id:"e3a", st:3, t:"Что дальше",
+   x:"Школа кончилась. Дома ждут, что ты уже взрослый и с деньгами, а куда идти — не сказано.",
+   o:[{a:"Учиться дальше, в долг за учёбу", s:"", e:{k:12, m:-5, p:2}},
+      {a:"Сразу работать", s:"", e:{m:5, k:1, h:-2}},
+      {a:"Пойти учиться бесплатно, туда, куда взяли", s:"", e:{k:7, m:-1, p:-1}},
+      {a:"Уехать туда, где есть работа", s:"", e:{m:4, r:-4, p:1, k:2}}]},
+  {id:"e3b", st:3, t:"Отъезд",
+   x:"В соседнем городе обещают работу и комнату в общежитии. Дома — ничего, кроме привычного.",
+   o:[{a:"Собрать сумку", s:"", e:{k:4, r:-5, m:3, p:1}},
+      {a:"Остаться рядом с родными", s:"", e:{r:5, m:-2, p:1}}]},
+  {id:"e3c", st:3, t:"Первые взрослые деньги",
+   x:"Первая зарплата больше, чем всё, что было в руках до сих пор.",
+   o:[{a:"Отдать матери", s:"", e:{r:6, m:-2, p:1}},
+      {a:"Отложить", s:"", e:{m:3, p:-1, k:1}},
+      {a:"Потратить на себя и друзей", s:"", e:{p:5, r:3, m:-1}}]},
+
+  /* 4 — начало */
+  {id:"e4a", st:4, t:"Работа",
+   x:"Двадцать с чем-то, восьмичасовой день, начальник, который не помнит имени. Рядом кто-то растёт быстрее.",
+   o:[{a:"Хвататься за любую переработку", s:"", e:{m:4, k:4, h:-4, r:-3}},
+      {a:"Делать ровно столько, сколько платят", s:"", e:{h:2, p:2, k:-1}},
+      {a:"Учиться вечерами", s:"", e:{k:7, m:-2, p:-2, h:-2}}]},
+  {id:"e4b", st:4, t:"Люди",
+   x:"Кто-то зовёт жить вместе. Родители говорят «рано», друзья говорят «наконец».",
+   o:[{a:"Съехаться", s:"", e:{p:6, r:4, m:-3, h:1}},
+      {a:"Подождать ещё год", s:"", e:{p:-2, m:2, k:1}},
+      {a:"Расстаться и не тянуть", s:"", e:{p:-4, r:-2, k:2}}]},
+  {id:"e4c", st:4, t:"Здоровье впервые",
+   x:"Спина, зубы, вечный кашель. Врач говорит: «Молодой, само пройдёт», и берёт за приём как за полдня работы.",
+   o:[{a:"Провериться и лечиться", s:"", e:{h:7, m:-3}},
+      {a:"Терпеть и работать", s:"", e:{h:-6, m:1, p:-1}}]},
+  {id:"e4d", st:4, cond:b=>b.wealth<0.9, t:"Родня просит",
+   x:"Из дома звонят: нужны деньги, срочно, на лечение. Своих накоплений почти нет.",
+   o:[{a:"Отдать и залезть в долг", s:"", e:{m:-5, r:6, h:-1}},
+      {a:"Отказать", s:"", e:{r:-7, p:-4, m:1}},
+      {a:"Отдать часть", s:"", e:{m:-2, r:3}}]},
+
+  {id:"e4e", st:4, cond:(b, L)=>L.children === 0 && (b.wealth < 1.2 || ["NGA","EGY","IND"].includes(b.c.iso)), t:"Своя семья рано",
+   x:"Дома ждут внуков, в доме уже есть комната для них. Знакомые женятся в девятнадцать, и это выглядит нормально.",
+   o:[{a:"Ребёнок сейчас", s:"", e:{c:1, m:-4, p:4, r:3, k:-3}},
+      {a:"Сначала встать на ноги", s:"", e:{m:2, r:-4, p:1}}]},
+
+  /* 5 — около тридцати */
+  {id:"e5a", st:5, t:"Повышение",
+   x:"Предлагают должность, где больше денег и больше людей, которые будут тебя ненавидеть по пятницам.",
+   o:[{a:"Взять", s:"", e:{m:8, k:4, p:-2, r:-3, h:-3}},
+      {a:"Отказаться, остаться в тени", s:"", e:{p:3, h:2, m:-1}},
+      {a:"Попросить другое: меньше часов", s:"", e:{h:4, p:5, m:-4}}]},
+  {id:"e5b", st:5, prio:true, cond:b=>["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Дети",
+   x:"Разговор на кухне: «Может, пора?» У соседей уже трое, у родни спрашивают, когда.",
+   o:[{a:"Двое, как у всех", s:"", e:{c:2, p:6, r:4, m:-8, h:-3, k:-2}},
+      {a:"Один, и хватит", s:"", e:{c:1, p:4, r:1, m:-4, h:-1}},
+      {a:"Пока не сейчас", s:"", e:{m:3, p:-2, r:-3}}]},
+  {id:"e5b2", st:5, prio:true, cond:b=>!["NGA","EGY","IND","IDN","BRA"].includes(b.c.iso), t:"Дети",
+   x:"Разговор на кухне: «Может, пора?» Знакомые уже с колясками, а вы всё откладываете.",
+   o:[{a:"Один ребёнок", s:"", e:{c:1, p:6, r:3, m:-5, h:-2}},
+      {a:"Двое, если получится", s:"", e:{c:2, p:6, r:2, m:-9, h:-4, k:-2}},
+      {a:"Не заводить", s:"", e:{p:1, r:-5, m:4, h:1}}]},
+  {id:"e5c", st:5, t:"Своё дело",
+   x:"Знакомый зовёт в долю: маленькое дело, свои клиенты, свои риски. Обещает больше, чем зарплата.",
+   o:[{a:"Вложить накопления", s:"", e:{m:-9, k:4, p:3}},
+      {a:"Пойти в дело руками, без денег", s:"", e:{m:3, k:3, h:-3}},
+      {a:"Не влезать", s:"", e:{m:2, p:-1}}]},
+  {id:"e5d", st:5, t:"Дом",
+   x:"Съём съедает треть дохода. Банк предлагает кредит на тридцать лет под проценты, которые не выглядят страшными только сегодня.",
+   o:[{a:"Взять кредит и въехать", s:"", e:{ho:1, m:-12, p:4, h:-2}},
+      {a:"Копить и ждать", s:"", e:{m:2, p:-2}},
+      {a:"Остаться с родителями и помогать им", s:"", e:{r:5, m:4, p:-3}}]},
+
+  /* 6 — тридцать с лишним */
+  {id:"e6a", st:6, t:"Часы",
+   x:"День расписан: работа, дорога, магазин, чужой сон. На себя остаётся сорок минут у экрана.",
+   o:[{a:"Выкроить время на спорт", s:"", e:{h:6, p:3, m:-1}},
+      {a:"Выкроить время на книги и учёбу", s:"", e:{k:6, p:2, r:-1}},
+      {a:"Отдать всё семье", s:"", e:{r:6, h:-3, p:-1}}]},
+  {id:"e6b", st:6, t:"Смена профессии",
+   x:"Работа привычная, платят предсказуемо, и всё чаще кажется, что жизнь идёт мимо.",
+   o:[{a:"Учиться заново, с нуля", s:"", e:{k:9, m:-7, p:4, h:-2}},
+      {a:"Остаться, но перестать ждать", s:"", e:{p:-4, h:2, m:2}},
+      {a:"Сменить страну или город", s:"", e:{k:3, r:-4, p:3, m:-4}}]},
+  {id:"e6c", st:6, t:"Обследование",
+   x:"В поликлинике находят то, что не болит: давление, сахар, что-то в анализах.",
+   o:[{a:"Лечиться и менять быт", s:"", e:{h:8, m:-4, p:-1}},
+      {a:"Забыть до первого приступа", s:"", e:{h:-7, m:1}}]},
+  {id:"e6e", st:6, prio:true, cond:(b,L)=>L.children>0 && L.children<4, t:"Ещё один",
+   x:"Первый уже говорит, второй пока только в разговорах. Денег на двоих ровно вдвое меньше, чем нужно.",
+   o:[{a:"Ещё один ребёнок", s:"", e:{c:1, m:-5, p:4, r:3, h:-3}},
+      {a:"Остановиться на этом", s:"", e:{m:3, p:-1, r:-2}}]},
+  {id:"e6d", st:6, cond:(b,L)=>L.children>0, t:"Школа ребёнка",
+   x:"Дневник, кружки, деньги на всё сразу. Свои планы снова сдвигаются на год.",
+   o:[{a:"Вкладываться по полной", s:"", e:{r:6, m:-5, h:-2, p:2}},
+      {a:"Сказать «сам разберётся»", s:"", e:{m:3, r:-3, p:1}}]},
+
+  /* 7 — сорок */
+  {id:"e7a", st:7, t:"Родители",
+   x:"Отцу хуже. Мать держится, но уже не носит сумки. Их жизнь начинает зависеть от твоей.",
+   o:[{a:"Забрать к себе и ухаживать", s:"", e:{r:7, m:-7, h:-3, p:2, he:1}},
+      {a:"Платить сиделке", s:"", e:{m:-9, r:2, p:-1}},
+      {a:"Навещать по выходным", s:"", e:{r:-2, p:-3}}]},
+  {id:"e7b", st:7, t:"Долги",
+   x:"Кредиты, рассрочки, чужое поручительство — сумма, которую видно только если всё сложить.",
+   o:[{a:"Собрать всё и закрыть по одному", s:"", e:{m:-8, p:4, k:2, h:-1}},
+      {a:"Перекредитоваться и тянуть", s:"", e:{m:-4, p:-4}},
+      {a:"Объявить себя банкротом", s:"", e:{m:-2, p:-3, r:-2}}]},
+  {id:"e7c", st:7, t:"Выгорание",
+   x:"Утром не встаётся, вечером всё раздражает, в середине дня — пусто.",
+   o:[{a:"Взять паузу на полгода", s:"", e:{p:7, h:5, m:-7}},
+      {a:"Терпеть, как все", s:"", e:{h:-5, p:-5, m:3}},
+      {a:"Начать пить по вечерам", s:"", e:{h:-8, p:-2, m:-2}}]},
+  {id:"e7d", st:7, cond:(b,L)=>L.k>55, t:"Ученики",
+   x:"Тебя просят вести: курс, смену, младших. За это платят мало, но это первый раз, когда спрашивают именно тебя.",
+   o:[{a:"Взять", s:"", e:{st:1, k:3, r:4, p:4, m:-2}},
+      {a:"Отказаться, нет времени", s:"", e:{m:2, p:-1}}]},
+
+  /* 8 — около пятидесяти */
+  {id:"e8a", st:8, t:"Дети вырастают",
+   x:"Из дома уходят. Комната стоит пустая, телефон молчит неделями.",
+   o:[{a:"Звонить самому, не ждать", s:"", e:{r:6, p:2}},
+      {a:"Дать жить своей жизнью", s:"", e:{r:-2, p:2}},
+      {a:"Заняться собой впервые за двадцать лет", s:"", e:{p:5, h:4, k:2}}]},
+  {id:"e8b", st:8, t:"Первая потеря",
+   x:"Умирает друг юности. На похоронах видно, как мало осталось тех, кто помнит тебя молодым.",
+   o:[{a:"Собрать старых друзей за столом", s:"", e:{r:6, p:3, m:-1}},
+      {a:"Закрыться дома", s:"", e:{p:-5, h:-2, r:-4}}]},
+  {id:"e8c", st:8, t:"Работа к пятидесяти",
+   x:"В объявлениях ищут «до 45». Начальник младше тебя, спрашивает отчёт и не понимает объяснений.",
+   o:[{a:"Держаться места, не спорить", s:"", e:{m:4, p:-4, h:-2}},
+      {a:"Уйти в частную практику", s:"", e:{m:3, p:2, h:-2, r:2}},
+      {a:"Сменить сферу, куда берут любого", s:"", e:{m:-4, h:1, p:2}}]},
+  {id:"e8d", st:8, cond:(b,L)=>L.money>0, t:"Накопления",
+   x:"На счету впервые сумма, которую видно. Банк предлагает вложить, брат — дать в дело, дочь — на её квартиру.",
+   o:[{a:"Вложить спокойно", s:"", e:{m:5, p:2}},
+      {a:"Дать семье без возврата", s:"", e:{m:-6, r:6, p:3}},
+      {a:"Оставить как есть", s:"", e:{m:-2, p:-1}}]},
+
+  /* 9 — пятьдесят с лишним */
+  {id:"e9a", st:9, t:"Тело напоминает",
+   x:"Стены давления, колено, зрение. Врач разговаривает медленно, как с человеком, у которого есть время.",
+   o:[{a:"Ходить, плавать, меньше соли", s:"", e:{h:8, p:3, m:-1}},
+      {a:"Таблетки и жить как раньше", s:"", e:{h:2, m:-3, p:1}},
+      {a:"Ничего не менять", s:"", e:{h:-8, p:1}}]},
+  {id:"e9b", st:9, t:"Пенсия впереди",
+   x:"До неё ещё далеко, но уже ясно, сколько будет. Цифра меньше зарплаты втрое.",
+   o:[{a:"Откладывать всерьёз", s:"", e:{m:6, p:-2}},
+      {a:"Доработать как можно дольше", s:"", e:{m:4, h:-3}},
+      {a:"Надеяться на детей", s:"", e:{r:-3, p:-2}}]},
+  {id:"e9c", st:9, cond:(b,L)=>L.children>0, t:"Внуки",
+   x:"Появляется человек, с которым можно просто гулять два часа без цели.",
+   o:[{a:"Сидеть с ними, сколько попросят", s:"", e:{r:8, p:7, h:-3, he:1}},
+      {a:"Помогать понемногу и жить своим", s:"", e:{p:4, r:3, h:2}}]},
+  {id:"e9d", st:9, t:"Своё вместо чужого",
+   x:"Можно наконец что-то начать: огород, мастерская, хор, поездки. Денег это не принесёт.",
+   o:[{a:"Начать", s:"", e:{p:8, r:4, m:-4, h:2}},
+      {a:"Смотреть, как начинают другие", s:"", e:{p:-3, m:1}}]},
+
+  /* 10 — на пенсии */
+  {id:"e10a", st:10, t:"Первый год без работы",
+   x:"Утром не надо никуда, и от этого сначала хорошо, потом тревожно.",
+   o:[{a:"Завести режим и людей вокруг", s:"", e:{p:6, h:4, r:4}},
+      {a:"Смотреть новости и лежать", s:"", e:{p:-5, h:-5}},
+      {a:"Взять подработку для порядка", s:"", e:{m:3, h:-2, p:2}}]},
+  {id:"e10b", st:10, t:"Болезнь всерьёз",
+   x:"Больница, капельницы, палата на четверых. Домашние приезжают по расписанию, которое не с кем согласовать.",
+   o:[{a:"Лечиться до конца, сколько бы ни стоило", s:"", e:{h:6, m:-10, p:-2}},
+      {a:"Лечиться по минимуму, остальное — жить", s:"", e:{h:-4, p:4, m:-3}},
+      {a:"Просить помощи у детей", s:"", e:{r:3, m:-4, p:-2}}]},
+  {id:"e10c", st:10, cond:(b,L)=>L.r<50, t:"Тишина",
+   x:"Дни похожи. Разговор за неделю — с продавцом и с котом.",
+   o:[{a:"Пойти туда, где люди: клуб, церковь, двор", s:"", e:{r:7, p:5, h:1}},
+      {a:"Так и сидеть", s:"", e:{p:-6, h:-3}}]},
+
+  /* 11 — семьдесят */
+  {id:"e11a", st:11, t:"Дом и вещи",
+   x:"Вещей больше, чем нужно, а нужное — это фотографии, которые некому показывать.",
+   o:[{a:"Раздать и написать, что где лежит", s:"", e:{p:4, r:3, le:1}},
+      {a:"Ничего не трогать", s:"", e:{p:-2}}]},
+  {id:"e11b", st:11, t:"Последнее путешествие",
+   x:"Тело уже не то, но есть место, куда хотелось всю жизнь.",
+   o:[{a:"Поехать, пока можно", s:"", e:{p:8, m:-6, h:-2}},
+      {a:"Посмотреть на фотографии других", s:"", e:{p:-3, m:1}}]},
+  {id:"e11c", st:11, t:"Кто рядом",
+   x:"Врач спрашивает, кто сможет приехать ночью. Надо назвать имя.",
+   o:[{a:"Назвать и позвонить первой", s:"", e:{r:5, p:2, m:-2}},
+      {a:"Сказать, что справишься сам", s:"", e:{p:-4, r:-2}}]},
+
+  /* 12 — последние годы */
+  {id:"e12a", st:12, t:"Ещё год",
+   x:"Год, за который мало что меняется и всё решается. Кто-то из ровесников уже не отвечает на звонки.",
+   o:[{a:"Успеть сказать важное", s:"", e:{r:6, p:5, le:1}},
+      {a:"Держать всё при себе", s:"", e:{p:-3, r:-2}},
+      {a:"Записать то, что помнишь", s:"", e:{k:2, le:1, p:3}}]},
+  {id:"e12b", st:12, t:"Последний дом",
+   x:"Больше не выйти без чужой руки. В окне двор, в котором играли чужие дети.",
+   o:[{a:"Терпеть и смотреть в окно", s:"", e:{p:-2, h:-2}},
+      {a:"Перебраться туда, где ухаживают", s:"", e:{m:-8, h:3, r:-2}}]}
+];
+
+/* ================== МАТЕМАТИКА ================== */
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rnd){
+  let u = 0, v = 0;
+  while(u === 0) u = rnd();
+  while(v === 0) v = rnd();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+function pick(rnd, arr){ return arr[Math.floor(rnd() * arr.length)]; }
+function clamp(x, a, b){ return Math.max(a, Math.min(b, x)); }
+
+const ECON = {wageShare:0.42, surplusBase:0.075, surplusK:1/900, pension:0.46, partial:0.78,
+              healthYoung:0.05, healthMid:0.16, healthOld:0.30, shockP:0.30};
+
+/* вес страны — доля рождений, сглаженная корнем: иначе Индия выпадает
+   в каждой второй жизни и играть становится скучно. Это продуктовое
+   решение, оно названо в разделе «как это работает». */
+const COUNTRY_W = COUNTRIES.map(c => Math.pow(c.share, 0.5));
+function pickCountry(rnd, avoid){
+  const total = COUNTRY_W.reduce((a, b) => a + b, 0);
+  for(let attempt = 0; attempt < 3; attempt++){
+    let x = rnd() * total;
+    for(let i = 0; i < COUNTRIES.length; i++){
+      x -= COUNTRY_W[i];
+      if(x <= 0){
+        if(avoid && COUNTRIES[i].iso === avoid && attempt < 2) break;
+        return COUNTRIES[i];
+      }
+    }
+  }
+  return COUNTRIES[0];
+}
+function lastCountry(){
+  try{ return localStorage.getItem("zherebey.last") || null; }catch(e){ return null; }
+}
+function rememberCountry(iso){
+  try{ localStorage.setItem("zherebey.last", iso); }catch(e){}
+}
+
+function makeBirth(seed, avoidIso){
+  const rnd = mulberry32(seed >>> 0);
+  const c = pickCountry(rnd, avoidIso || null);
+  const sex = rnd() < 0.512 ? "m" : "f";
+  const rural = rnd() < c.rural;
+  const wealth = Math.exp(0.85 * gauss(rnd));
+  const name = pick(rnd, sex === "m" ? c.m : c.f) + " " + pick(rnd, c.s);
+  const place = rural ? pick(rnd, c.villages) : pick(rnd, c.cities);
+  const health0 = clamp(46 + (c.le - 54) * 0.95 + gauss(rnd) * 7, 5, 97);
+  return {
+    seed, c, sex, name, rural, wealth, place, birthYear: 2026,
+    health0,
+    happiness0: clamp(50 + gauss(rnd) * 9, 15, 85),
+    knowledge0: clamp(36 + gauss(rnd) * 10 + (wealth > 1.5 ? 8 : 0), 5, 80),
+    relations0: clamp(48 + gauss(rnd) * 9, 15, 82)
+  };
+}
+
+function newLife(seed, avoidIso){
+  const b = makeBirth(seed, avoidIso);
+  return {
+    b, stage: 0, age: 0,
+    h: b.health0, p: b.happiness0, k: b.knowledge0, r: b.relations0,
+    money: 0, children: 0, students: 0, houses: 0, letters: 0, helped: 0,
+    used: [], log: [], dead: false, deathAge: null, cause: null,
+    wage: 0
+  };
+}
+
+function stageOf(L){ return STAGES[L.stage]; }
+
+function wageMonthly(L){
+  const b = L.b;
+  const gap = b.sex === "f" ? 0.88 : 1;
+  return (b.c.gdp * ECON.wageShare / 12) * (0.55 + L.k / 130) * (b.rural ? 0.78 : 1) * gap;
+}
+
+function applyEconomy(L, span){
+  const st = stageOf(L);
+  if(st.age < 15) return 0;
+  let w = wageMonthly(L) * 12;
+  if(st.age >= 65) w *= ECON.pension;
+  else if(st.age >= 56) w *= ECON.partial;
+  L.wage = w;
+  const surplus = w * (ECON.surplusBase + L.k / 900);
+  L.money += surplus * span;
+  const rate = st.age >= 65 ? ECON.healthOld : st.age >= 50 ? ECON.healthMid : ECON.healthYoung;
+  const hc = w * rate * (L.h < 45 ? 1.9 : 1);
+  L.money -= hc * span;
+  /* после выхода на пенсию глубже нуля не уходят: долг гасит семья или государство */
+  if(st.age >= 65 && L.money < 0){ L.money = 0; L.bankrupt = true; }
+  return surplus * span - hc * span;
+}
+
+function maybeShock(L, rnd){
+  if(L.stage < 4) return null;
+  if(rnd() > ECON.shockP) return null;
+  const w = L.wage || wageMonthly(L) * 12;
+  const roll = rnd();
+  let cost, text;
+  if(roll < 0.45){
+    cost = w * (0.35 + rnd() * 1.1);
+    text = "Незапланированная больница в семье.";
+  } else if(roll < 0.75){
+    cost = w * (0.3 + rnd() * 0.9);
+    text = "Работа или дело просело на несколько месяцев.";
+  } else {
+    cost = w * (0.7 + rnd() * 1.8);
+    text = "Пришлось закрыть чужой долг.";
+  }
+  L.money -= cost;
+  return {text, cost};
+}
+
+function pickEvent(L, rnd, allowPrio){
+  const pool = EVENTS.filter(e =>
+    e.st === L.stage &&
+    !L.used.includes(e.id) &&
+    (!e.cond || e.cond(L.b, L))
+  );
+  if(!pool.length) return null;
+  let ev = null;
+  if(allowPrio !== false){
+    const prio = pool.filter(e => e.prio);
+    if(prio.length) ev = prio[0];
+  }
+  if(!ev){
+    const rest = pool.filter(e => !e.prio);
+    if(!rest.length) return null;
+    ev = pick(rnd, rest);
+  }
+  L.used.push(ev.id);
+  return ev;
+}
+
+/* выживаемость: логистическая кривая вокруг медианы смертности страны.
+   Медиана смертности выше ожидаемой продолжительности жизни при рождении,
+   потому что средняя включает младенческие смерти. */
+function deathProb(L, age){
+  const le = L.b.c.le;
+  const a50 = le + (le >= 75 ? 0 : 2.5);
+  const s = le >= 75 ? 10 : 8.5;
+  const S = a => 1 / (1 + Math.exp((a - a50) / s));
+  let p = 1 - S(age + 1) / S(age);
+  p *= 1 + Math.max(0, 45 - L.h) / 50;
+  return clamp(p, 0, 0.99);
+}
+
+/* прогон смертности по годам внутри главы: возвращает возраст смерти или null */
+function advanceMortality(L, rnd, fromAge, span){
+  if(fromAge === 0 && rnd() < L.b.c.imr / 1000) return 0;
+  const start = Math.max(1, fromAge);
+  for(let y = start; y < fromAge + span; y++){
+    if(rnd() < deathProb(L, y)) return y;
+  }
+  return null;
+}
+
+function causeFor(age, rnd){
+  if(age < 1) return pick(rnd, ["инфекция в первые недели", "осложнения при рождении", "недоношенность"]);
+  if(age < 15) return pick(rnd, ["несчастный случай", "тяжёлая инфекция", "авария на дороге"]);
+  if(age < 40) return pick(rnd, ["авария", "несчастный случай", "болезнь сердца", "осложнения после болезни"]);
+  if(age < 65) return pick(rnd, ["сердце", "рак", "инсульт", "осложнения диабета"]);
+  return pick(rnd, ["сердце", "инсульт", "пневмония", "просто возраст"]);
+}
+
+function lastWords(L, rnd){
+  if(L.deathAge < 20) return "«Не плачьте, ладно».";
+  if(L.children > 0 && L.r > 55) return pick(rnd, ["«Идите ешьте, я полежу»", "«Не сидите тут, у вас дела»"]);
+  if(L.money > 0 && L.r < 40) return pick(rnd, ["«Дом не продавайте»", "«Деньги в шкафу, в синей коробке»"]);
+  if(L.money <= 0 && L.children > 0) return pick(rnd, ["«Долг отдайте, если сможете»", "«Простите, что не оставил ничего»"]);
+  if(L.r < 40) return pick(rnd, ["«Свет оставьте, я посижу»", "«Хорошо, что вы пришли»"]);
+  return pick(rnd, ["«Хорошая была жизнь. Не идеальная, но хорошая»", "«Всё, хватит»"]);
+}
+
+/* полный прогон без DOM — для симуляции «как прожили другие» */
+function autoRun(seed, choiceRule, runIndex){
+  const mix = (seed ^ 0x9E3779B9 ^ Math.imul((runIndex || 0) + 1, 2654435761)) >>> 0;
+  const rnd = mulberry32(mix);
+  const L = newLife(seed);
+  while(!L.dead){
+    const st = stageOf(L);
+    const died = advanceMortality(L, rnd, st.age, st.span);
+    if(died !== null){
+      L.dead = true; L.deathAge = died; L.cause = causeFor(died, rnd); break;
+    }
+    applyEconomy(L, st.span);
+    maybeShock(L, rnd);
+    let ev = pickEvent(L, rnd, true);
+    while(ev){
+      const idx = choiceRule(rnd, ev, L);
+      const opt = ev.o[idx];
+      L.money += moneyDelta(L, opt.e.m);
+      applyEffects(L, opt.e);
+      ev = ev.prio ? pickEvent(L, rnd, false) : null;
+    }
+    L.age = st.age + st.span;
+    L.stage++;
+    if(L.stage >= STAGES.length){
+      L.dead = true; L.deathAge = Math.min(99, L.age); L.cause = causeFor(L.deathAge, rnd); break;
+    }
+  }
+  return L;
+}
+
+function applyEffects(L, e){
+  if(!e) return;
+  L.h = clamp(L.h + (e.h || 0), 1, 98);
+  L.p = clamp(L.p + (e.p || 0), 1, 98);
+  L.k = clamp(L.k + (e.k || 0), 1, 98);
+  L.r = clamp(L.r + (e.r || 0), 1, 98);
+  if(e.c) L.children += e.c;
+  if(e.st) L.students += e.st;
+  if(e.ho) L.houses += e.ho;
+  if(e.le) L.letters += e.le;
+  if(e.he) L.helped += e.he;
+}
+/* m в вариантах — месячные зарплаты страны, считается до применения эффектов */
+function moneyDelta(L, m){
+  if(!m) return 0;
+  if(STAGES[L.stage].age < 16) return 0;   /* до 16 это деньги семьи, а не героя */
+  return m * wageMonthly(L);
+}
+
+/* ================== ФОРМАТ ================== */
+const nf = new Intl.NumberFormat("ru-RU");
+function money(n){
+  const v = Math.round(Math.abs(n) / 100) * 100;
+  return (n < 0 ? "−" : "") + nf.format(v).replace(/\s/g, "\u00A0") + "\u00A0$";
+}
+function nb(s){ return String(s).replace(/ /g, "\u00A0"); }
+function years(n){ return nb(n) + "\u00A0" + plural(n, "год", "года", "лет"); }
+function plural(n, one, few, many){
+  const a = Math.abs(n) % 100, b = a % 10;
+  if(a > 10 && a < 20) return many;
+  if(b > 1 && b < 5) return few;
+  if(b === 1) return one;
+  return many;
+}
+function wealthLine(b){
+  const w = b.wealth;
+  let money_, cls;
+  if(w < 0.4){ money_ = "в доме считали каждую монету"; }
+  else if(w < 0.75){ money_ = "денег хватало до середины месяца"; }
+  else if(w < 1.5){ money_ = "жили как все вокруг"; }
+  else if(w < 3){ money_ = "жили лучше соседей"; }
+  else { money_ = "денег было больше, чем нужно"; }
+  return money_;
+}
+function placePhrase(b){
+  return b.rural ? b.place : "в " + b.place;
+}
+function originLine(b){
+  const le = Math.round(b.c.le);
+  return b.place.charAt(0).toUpperCase() + b.place.slice(1) + ", " + b.c.ru + ". Средняя жизнь здесь — " +
+         le + " " + plural(le, "год", "года", "лет") + ". Семья: " + wealthLine(b) + ".";
+}
+
+/* ================== СОСТОЯНИЕ И РЕНДЕР ================== */
+let L = null;
+let currentEvent = null;
+let currentMode = "free";
+const $ = id => document.getElementById(id);
+const screens = ["s-start", "s-life", "s-death", "s-card", "s-archive", "s-how"];
+function show(which){
+  screens.forEach(s => $(s).classList.toggle("hidden", s !== which));
+  window.scrollTo(0, 0);
+}
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("on"), 1600);
+}
+
+function renderWho(){
+  $("who").innerHTML = "<b>" + L.b.name + "</b> · " + L.b.c.ru + " · " + L.age + " " +
+    plural(L.age, "год", "года", "лет");
+  $("stage").textContent = stageOf(L).name;
+}
+function renderScales(){
+  const rows = [["здоровье", L.h, "h"], ["счастье", L.p, "p"], ["знания", L.k, "k"], ["близкие", L.r, "r"]];
+  let html = rows.map(([lab, v]) => {
+    const w = Math.round(v);
+    return '<div class="scale"><div class="lab">' + lab + '</div>' +
+           '<div class="bar"><div class="fill" style="width:' + w + '%"></div></div>' +
+           '<div class="val">' + w + '</div></div>';
+  }).join("");
+  html += '<div class="moneyline"><span>Накопления</span><span class="' + (L.money < 0 ? "neg" : "") + '">' +
+          money(L.money) + '</span></div>';
+  $("scales").innerHTML = html;
+}
+function renderFeed(){
+  const last = L.log.slice(-4);
+  $("feed").innerHTML = last.map(en =>
+    '<div class="entry"><div class="yr">' + en.yr + '</div><div class="tx">' + en.tx + '</div></div>'
+  ).join("");
+}
+function renderEvent(){
+  if(!currentEvent){
+    $("event").innerHTML = '<h2>Дальше</h2><p>Год за годом. Нажми, чтобы продолжить.</p>' +
+      '<button class="opt" data-next="1">Прожить эти годы</button>';
+    return;
+  }
+  const ev = currentEvent;
+  let html = "<h2>" + ev.t + "</h2><p>" + ev.x + "</p>";
+  ev.o.forEach((opt, i) => {
+    html += '<button class="opt" data-i="' + i + '">' + opt.a +
+            (opt.s ? '<span class="sub">' + opt.s + "</span>" : "") + "</button>";
+  });
+  $("event").innerHTML = html;
+}
+
+/* ================== ХОД ЖИЗНИ ================== */
+function startLife(seed){
+  L = newLife(seed, lastCountry());
+  rememberCountry(L.b.c.iso);
+  currentEvent = null;
+  show("s-life");
+  renderWho();
+  L.log.push({yr: "2026 · рождение", tx: originLine(L.b)});
+  renderScales();
+  renderFeed();
+  nextStage(true);
+}
+
+function stageLabel(age){
+  return (L.b.birthYear + age) + " · " + STAGES[L.stage].name;
+}
+
+function nextStage(first){
+  if(L.stage >= STAGES.length){ finishLife(); return; }
+  const st = stageOf(L);
+  L.age = st.age;
+  renderWho();
+  const died = advanceMortality(L, Math.random, st.age, st.span);
+  if(died !== null){ finishLife(died); return; }
+  /* заработок и расходы за главу считаются один раз, при входе в неё */
+  const surplus = applyEconomy(L, st.span);
+  const label = stageLabel(st.age);
+  if(surplus < 0) L.log.push({yr: label, tx: "Расходы больше заработка."});
+  const shock = maybeShock(L, Math.random);
+  if(shock) L.log.push({yr: label, tx: shock.text + " Минус " + money(shock.cost) + ". На счету: " + money(L.money) + "."});
+  renderScales(); renderFeed();
+  currentEvent = pickEvent(L, Math.random, !first);
+  renderEvent();
+}
+
+function choose(i){
+  const ev = currentEvent;
+  const opt = ev.o[i];
+  const delta = moneyDelta(L, opt.e.m);
+  L.money += delta;
+  applyEffects(L, opt.e);
+  const st = stageOf(L);
+  const label = stageLabel(st.age);
+  let tx = opt.a + ".";
+  if(opt.s) tx += " " + opt.s + ".";
+  if(delta) tx += " (" + (delta > 0 ? "+" : "") + money(delta) + ")";
+  L.log.push({yr: label, tx});
+  currentEvent = null;
+  /* обязательная развилка не закрывает главу — после неё идёт ещё одно событие */
+  if(ev.prio){
+    const second = pickEvent(L, Math.random, false);
+    if(second){
+      currentEvent = second;
+      renderScales(); renderFeed(); renderEvent();
+      return;
+    }
+  }
+  L.stage++;
+  L.age = st.age + st.span;
+  renderScales(); renderFeed();
+  nextStage(false);
+}
+
+function finishLife(fixedAge, sudden){
+  const rnd = Math.random;
+  const age = fixedAge != null ? fixedAge : Math.min(101, L.age);
+  L.dead = true; L.deathAge = age; L.cause = causeFor(age, rnd);
+  saveLife();
+  renderDeath();
+  show("s-death");
+}
+
+/* ================== ЭКРАН СМЕРТИ ================== */
+function legacyLine(){
+  const parts = [];
+  if(L.children) parts.push(L.children + " " + plural(L.children, "ребёнок", "ребёнка", "детей"));
+  if(L.students) parts.push(L.students + " " + plural(L.students, "ученик", "ученика", "учеников"));
+  if(L.houses) parts.push(L.houses + " " + plural(L.houses, "дом", "дома", "домов"));
+  if(L.letters) parts.push(L.letters + " " + plural(L.letters, "письмо", "письма", "писем"));
+  if(L.helped) parts.push("забота о близких");
+  if(L.money > 0) parts.push("сбережения " + money(L.money));
+  if(L.money < 0) parts.push("долг " + money(Math.abs(L.money)));
+  return parts.length ? parts.join(", ") : "после не осталось почти ничего";
+}
+
+function peersStats(){
+  const n = 200;
+  const ages = [], moneys = [], kids = [];
+  for(let i = 0; i < n; i++){
+    const sim = autoRun(L.b.seed, (rnd, ev) => Math.floor(rnd() * ev.o.length), i + 1);
+    ages.push(sim.deathAge); moneys.push(sim.money); kids.push(sim.children);
+  }
+  ages.sort((a, b) => a - b);
+  moneys.sort((a, b) => a - b);
+  return {
+    n,
+    median: ages[Math.floor(n / 2)],
+    young: Math.round(100 * ages.filter(a => a < 30).length / n),
+    max: ages[n - 1],
+    broke: Math.round(100 * moneys.filter(m => m <= 0).length / n)
+  };
+}
+
+function renderDeath(){
+  const b = L.b;
+  const peers = peersStats();
+  const le = Math.round(b.c.le);
+  const diff = L.deathAge - le;
+  const diffLine = diff === 0
+    ? "Ровно средняя продолжительность жизни по стране — " + years(le) + "."
+    : (diff > 0 ? "Средняя продолжительность жизни здесь — " + years(le) +
+        ". Ты прожил на " + years(diff) + " больше."
+      : "Средняя продолжительность жизни здесь — " + years(le) +
+        ". Ты прожил на " + years(-diff) + " меньше.");
+
+  const timeline = L.log.slice(-6).map(en =>
+    '<div class="l"><span class="sm">' + en.yr + "</span> — " + en.tx + "</div>").join("");
+
+  $("s-death").innerHTML =
+    '<div class="brand">жизнь окончена</div>' +
+    '<div class="big serif">' + L.deathAge + "</div>" +
+    '<div class="bigsub">' + plural(L.deathAge, "год жизни", "года жизни", "лет жизни") +
+      " · " + b.c.ru + "</div>" +
+    '<div class="block"><h3>запись</h3>' +
+      '<p class="l">' + b.name + ", " + b.place + ". " + (b.sex === "m" ? "Мужчина" : "Женщина") + ". " +
+      "Причина: " + L.cause + ".</p>" +
+      '<p class="quote" style="margin-top:10px">' + lastWords(L, Math.random) + "</p></div>" +
+    '<div class="block"><h3>чем закончилось</h3>' +
+      '<div class="nums" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+      [["здоровье", L.h], ["счастье", L.p], ["знания", L.k], ["близкие", L.r]].map(([k, v]) =>
+        '<div class="sm">' + k + '<b style="display:block;font-size:17px;color:var(--ink)">' + Math.round(v) + "</b></div>").join("") +
+      "</div><hr class='sep'><p class='l'>Осталось: " + legacyLine() + ".</p></div>" +
+    '<div class="block"><h3>сравнение</h3>' +
+      '<p class="l">' + diffLine + "</p>" +
+      '<p class="l sm" style="margin-top:8px">Если прожить эту же жизнь ещё двести раз, каждый раз выбирая иначе, ' +
+      "вышло бы так: обычно умирали в " + years(peers.median) + ", до 30 лет доживали " + nb(peers.young) +
+      "%, самый долгий век — " + years(peers.max) + ", а с нулём или в долгах заканчивали " + nb(peers.broke) +
+      "% жизней.</p></div>" +
+    '<div class="block"><h3>последние главы</h3>' + timeline + "</div>" +
+    '<button class="btn primary" id="btn-card">Карточка жизни</button>' +
+    '<div class="row" style="margin-top:10px"><button class="btn" id="btn-again">Ещё жизнь</button>' +
+    '<button class="btn" id="btn-arch2">Архив</button></div>';
+
+  $("btn-card").onclick = () => { renderCard(peers); show("s-card"); };
+  $("btn-again").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  $("btn-arch2").onclick = () => { renderArchive(); show("s-archive"); };
+}
+
+/* ================== КАРТОЧКА ================== */
+function cardText(){
+  const b = L.b;
+  return [
+    "ЖРЕБИЙ",
+    b.c.ru + ", " + b.birthYear + " · " + (b.sex === "m" ? "мужчина" : "женщина"),
+    L.deathAge + " " + plural(L.deathAge, "год", "года", "лет") + " · " + placePhrase(b),
+    "",
+    "Здоровье " + Math.round(L.h) + " · Счастье " + Math.round(L.p) +
+      " · Знания " + Math.round(L.k) + " · Близкие " + Math.round(L.r),
+    "Осталось: " + legacyLine(),
+    "",
+    "А как пройдёт твоя?"
+  ].join("\n");
+}
+
+function renderCard(peers){
+  const b = L.b;
+  peers = peers || peersStats();
+  $("s-card").innerHTML =
+    '<div class="brand">карточка жизни</div>' +
+    '<div class="card">' +
+      '<div class="brand">жребий</div>' +
+      '<p class="nm">' + L.deathAge + " " + plural(L.deathAge, "год", "года", "лет") + " жизни</p>" +
+      '<p class="loc">' + b.name + " · " + b.c.ru + " · " + b.place + "</p>" +
+      '<hr class="sep">' +
+      '<div class="nums">' +
+        [["здоровье", L.h], ["счастье", L.p], ["знания", L.k], ["близкие", L.r]].map(([k, v]) =>
+          "<div>" + k + "<b>" + Math.round(v) + "</b></div>").join("") +
+      "</div>" +
+      '<hr class="sep">' +
+      '<p class="l" style="font-size:14px;color:#4a453d;margin:0">Осталось: ' + legacyLine() + ".</p>" +
+      '<p class="l" style="font-size:14px;color:#4a453d;margin:8px 0 0">Причина смерти: ' + L.cause + ".</p>" +
+      '<div class="foot">Эту же жизнь можно прожить иначе — ' + nb(peers.n) +
+        " раз, каждый раз с другими решениями. Обычно умирали в " + years(peers.median) + ".</div>" +
+    "</div>" +
+    '<button class="btn primary" id="btn-share">Поделиться</button>' +
+    '<div class="row" style="margin-top:10px"><button class="btn" id="btn-copy">Копировать</button>' +
+    '<button class="btn" id="btn-again2">Ещё жизнь</button></div>' +
+    '<button class="btn ghost" id="btn-home">На главную</button>';
+
+  $("btn-share").onclick = async () => {
+    const text = cardText();
+    if(navigator.share){
+      try{ await navigator.share({title: "Жребий", text}); }
+      catch(e){ /* отменили — не ошибка */ }
+    } else {
+      await copyText(text);
+      toast("Текст скопирован");
+    }
+  };
+  $("btn-copy").onclick = async () => { await copyText(cardText()); toast("Текст скопирован"); };
+  $("btn-again2").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  $("btn-home").onclick = () => show("s-start");
+}
+
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = t; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+}
+
+/* ================== АРХИВ ================== */
+const LS = "zherebey.v1";
+function loadArchive(){
+  try{ return JSON.parse(localStorage.getItem(LS) || "[]"); }catch(e){ return []; }
+}
+function saveLife(){
+  const arr = loadArchive();
+  arr.unshift({
+    at: Date.now(), country: L.b.c.ru, name: L.b.name, age: L.deathAge,
+    h: Math.round(L.h), p: Math.round(L.p), k: Math.round(L.k), r: Math.round(L.r),
+    money: Math.round(L.money), cause: L.cause, legacy: legacyLine()
+  });
+  try{ localStorage.setItem(LS, JSON.stringify(arr.slice(0, 60))); }catch(e){}
+}
+function renderArchive(){
+  const arr = loadArchive();
+  let html = '<div class="brand">архив</div><h1 style="font-size:30px">Прожитые жизни</h1>';
+  if(!arr.length){
+    html += '<p class="lede">Пока пусто. Первая жизнь займёт три минуты.</p>';
+  } else {
+    html += '<div class="block list">' + arr.map(x => {
+      const d = new Date(x.at);
+      const ds = d.toLocaleDateString("ru-RU", {day:"2-digit", month:"2-digit"});
+      return '<div class="item"><div><b>' + x.age + "</b> " +
+        plural(x.age, "год", "года", "лет") + " · " + x.country +
+        '<div class="sm" style="font-size:12.5px;color:var(--faint)">' + x.legacy + "</div></div>" +
+        '<div class="d">' + ds + "</div></div>";
+    }).join("") + "</div>";
+  }
+  html += '<button class="btn primary" id="btn-again3">Новая жизнь</button>' +
+    '<button class="btn ghost" id="btn-clear">Очистить архив</button>' +
+    '<button class="btn ghost" id="btn-home2">На главную</button>';
+  $("s-archive").innerHTML = html;
+  $("btn-again3").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+  $("btn-clear").onclick = () => {
+    if(confirm("Удалить все сохранённые жизни? На телефоне они не восстановятся.")){
+      localStorage.removeItem(LS); renderArchive();
+    }
+  };
+  $("btn-home2").onclick = () => show("s-start");
+}
+
+/* ================== СОБЫТИЯ UI ================== */
+$("event").addEventListener("click", e => {
+  const b = e.target.closest(".opt");
+  if(!b) return;
+  if(b.dataset.next){ nextStage(false); return; }
+  const i = Number(b.dataset.i);
+  if(!Number.isNaN(i) && currentEvent) choose(i);
+});
+$("btn-born").onclick = () => startLife((Date.now() ^ (Math.random() * 1e9)) >>> 0);
+$("btn-archive").onclick = () => { renderArchive(); show("s-archive"); };
+$("btn-how").onclick = () => show("s-how");
+$("btn-back-start").onclick = () => show("s-start");
+
+/* проверка свежести сборки */
+(function(){
+  const build = document.documentElement.dataset.build;
+  fetch("version.txt?_=" + Date.now(), {cache: "no-store"})
+    .then(r => r.ok ? r.text() : null)
+    .then(v => {
+      v = (v || "").trim();
+      if(v && v !== build && !location.search.includes("v=" + v)){
+        location.replace(location.pathname + "?v=" + v);
+      }
+    })
+    .catch(() => {});
+})();
+
+/* отладка: доступ к движку из консоли */
+window.ZH = {newLife, autoRun, peersStats, COUNTRIES, EVENTS, STAGES, makeBirth, deathProb,
+  setLife: l => { L = l; }, getLife: () => L};
+</script>
+</body>
+</html>
